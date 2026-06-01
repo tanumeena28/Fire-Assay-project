@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <title>Report Desk</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0F172A; /* slate-900 */
+      color: #F8FAFC; /* slate-50 */
+      margin: 0;
+      padding: 16px 20px;
+      font-size: 13px;
+      box-sizing: border-box;
+    }
+
+    .container {
+      max-width: 100%;
+    }
+
+    /* Header styling */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+    }
+
+    .header-title h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #F1F5F9;
+    }
+
+    .header-title p {
+      margin: 4px 0 0 0;
+      font-size: 11px;
+      color: #94A3B8;
+    }
+
+    .card {
+      background-color: #1E293B; /* slate-800 */
+      border: 1px solid #334155; /* slate-700 */
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #3B82F6;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: #CBD5E1;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      background-color: #0F172A;
+      color: #FFFFFF;
+      font-size: 12px;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    /* Preview section grid */
+    .preview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .preview-value-box {
+      background-color: #0F172A;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .preview-label {
+      font-size: 9px;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .preview-value {
+      font-size: 18px;
+      font-weight: bold;
+      color: #10B981; /* emerald-500 */
+    }
+
+    .preview-meta {
+      font-size: 11px;
+      color: #94A3B8;
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Status badge styles */
+    .status-badge {
+      display: inline-block;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-pending {
+      background-color: rgba(148, 163, 184, 0.15);
+      border: 1px solid #94A3B8;
+      color: #CBD5E1;
+    }
+
+    .badge-draft {
+      background-color: rgba(59, 130, 246, 0.15);
+      border: 1px solid #3B82F6;
+      color: #93C5FD;
+    }
+
+    .badge-final {
+      background-color: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10B981;
+      color: #34D399;
+    }
+
+    /* Buttons */
+    .btn-action {
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-action:hover {
+      background: linear-gradient(135deg, #3B82F6, #2563EB);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-action:disabled {
+      background: #475569;
+      cursor: not-allowed;
+      box-shadow: none;
+      color: #94A3B8;
+    }
+
+    .btn-print {
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+    }
+
+    .btn-print:hover {
+      background: linear-gradient(135deg, #34D399, #10B981);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-small {
+      background-color: #334155;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .btn-small:hover {
+      background-color: #475569;
+    }
+
+    .btn-bulk {
+      background-color: #1E293B;
+      color: #F8FAFC;
+      border: 1px solid #475569;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .btn-bulk:hover {
+      background-color: #334155;
+      border-color: #3B82F6;
+    }
+
+    .footer-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      margin-top: 14px;
+      border-top: 1px solid #334155;
+      padding-top: 14px;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #FFF;
+      animation: spin 1s ease-in-out infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .message {
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 14px;
+      font-weight: 500;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .success-msg {
+      background-color: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10B981;
+      color: #34D399;
+    }
+
+    .error-msg {
+      background-color: rgba(239, 68, 68, 0.15);
+      border: 1px solid #EF4444;
+      color: #F87171;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-title">
+        <h2>Report Desk</h2>
+        <p>NCH Services Pvt. Ltd., Surat | Certificates & Reports</p>
+      </div>
+      <button class="btn-small" onclick="google.script.host.close()">Close</button>
+    </div>
+
+    <!-- Alert Box -->
+    <div id="messageBox" class="message hidden"></div>
+
+    <!-- Central Control -->
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <label for="subJobSelect" style="margin-bottom: 0;">Select Tested Sub-Jobcard</label>
+        <button type="button" class="btn-bulk" id="btnBulk" onclick="generateAllPending()">
+          <span id="bulkSpinner" class="spinner hidden" style="margin-right: 6px;"></span>Generate All Pending Reports
+        </button>
+      </div>
+      
+      <select id="subJobSelect" onchange="handleSelectionChange()">
+        <option value="">-- Loading Completed Assays... --</option>
+      </select>
+    </div>
+
+    <!-- Report Preview Area -->
+    <div class="card hidden" id="previewCard">
+      <h3>Report Assay Preview</h3>
+      
+      <div class="preview-grid">
+        <div class="preview-value-box">
+          <div class="preview-label">Sub-Jobcard No</div>
+          <div class="preview-value" id="prevJobNo" style="color: #3B82F6;">-</div>
+        </div>
+        <div class="preview-value-box">
+          <div class="preview-label">Mean Gold Fineness</div>
+          <div class="preview-value" id="prevMeanVal">-</div>
+        </div>
+      </div>
+
+      <div class="preview-meta">
+        <div>Test Date: <strong id="prevTestDate">-</strong></div>
+        <div>Status: <span id="prevStatusBadge" class="status-badge badge-pending">Pending</span></div>
+      </div>
+
+      <!-- Action Panel for Selected Report -->
+      <div class="footer-actions">
+        <button type="button" class="btn-action" id="btnGenerate" onclick="processReport()">
+          <span id="genSpinner" class="spinner hidden" style="margin-right: 6px;"></span><span id="btnGenText">Generate Report Record</span>
+        </button>
+        <button type="button" class="btn-action btn-print" id="btnPrint" disabled onclick="printReport()">
+          <span id="printSpinner" class="spinner hidden" style="margin-right: 6px;"></span>Print Certificate
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    var completedJobs = [];
+
+    // Startup
+    window.addEventListener('DOMContentLoaded', function() {
+      loadCompletedJobs();
+    });
+
+    /**
+     * Loads list of completed Fire Assay sub-jobs from backend
+     */
+    function loadCompletedJobs() {
+      var select = document.getElementById('subJobSelect');
+      select.innerHTML = '<option value="">-- Loading Completed Assays... --</option>';
+      
+      google.script.run
+        .withSuccessHandler(function(list) {
+          completedJobs = list;
+          select.innerHTML = '';
+          
+          if (list.length === 0) {
+            var opt = document.createElement('option');
+            opt.value = "";
+            opt.textContent = "-- No completed assays found --";
+            select.appendChild(opt);
+            document.getElementById('previewCard').classList.add('hidden');
+            return;
+          }
+          
+          var optDefault = document.createElement('option');
+          optDefault.value = "";
+          optDefault.textContent = "-- Select Sub-Jobcard --";
+          select.appendChild(optDefault);
+          
+          for (var i = 0; i < list.length; i++) {
+            var opt = document.createElement('option');
+            opt.value = list[i].subJobNo;
+            opt.textContent = list[i].subJobNo + ' (Mean: ' + list[i].meanVal.toFixed(1) + ' ppt | ' + list[i].status + ')';
+            select.appendChild(opt);
+          }
+        })
+        .withFailureHandler(function(err) {
+          showMsg("Failed to load completed assays: " + err.message, "error");
+        })
+        .getCompletedJobCards();
+    }
+
+    /**
+     * Handles selection change and populates the Preview Card
+     */
+    function handleSelectionChange() {
+      var val = document.getElementById('subJobSelect').value;
+      var card = document.getElementById('previewCard');
+      var msgBox = document.getElementById('messageBox');
+      
+      msgBox.className = "message hidden";
+
+      if (!val) {
+        card.classList.add('hidden');
+        return;
+      }
+
+      var job = completedJobs.find(function(j) {
+        return j.subJobNo === val;
+      });
+
+      if (job) {
+        document.getElementById('prevJobNo').textContent = job.subJobNo;
+        document.getElementById('prevMeanVal').textContent = job.meanVal.toFixed(1) + " ppt";
+        document.getElementById('prevTestDate').textContent = job.date;
+        
+        // Status badge configuration
+        var badge = document.getElementById('prevStatusBadge');
+        badge.textContent = job.status;
+        badge.className = "status-badge";
+        
+        var btnGen = document.getElementById('btnGenerate');
+        var btnPrint = document.getElementById('btnPrint');
+
+        if (job.status === "Pending") {
+          badge.classList.add('badge-pending');
+          btnGen.disabled = false;
+          document.getElementById('btnGenText').textContent = 'Generate Report Record';
+          btnPrint.disabled = true;
+        } else {
+          badge.classList.add('badge-draft');
+          btnGen.disabled = false;
+          document.getElementById('btnGenText').textContent = 'Re-generate Report';
+          btnPrint.disabled = false;
+        }
+
+        card.classList.remove('hidden');
+      }
+    }
+
+    /**
+     * Triggers report generation backend for the selected sub-job
+     */
+    function processReport() {
+      var subJobNo = document.getElementById('subJobSelect').value;
+      var btn = document.getElementById('btnGenerate');
+      var spinner = document.getElementById('genSpinner');
+      
+      if (!subJobNo) return;
+      
+      btn.disabled = true;
+      spinner.classList.remove('hidden');
+      
+      google.script.run
+        .withSuccessHandler(function(reportNo) {
+          btn.disabled = false;
+          spinner.classList.add('hidden');
+          showMsg("Successfully generated Draft Report for: " + reportNo, "success");
+          
+          // Reload list and preserve select focus
+          google.script.run
+            .withSuccessHandler(function(list) {
+              completedJobs = list;
+              // Update options text
+              var select = document.getElementById('subJobSelect');
+              var selIndex = select.selectedIndex;
+              
+              // Refresh dropdown options values
+              select.innerHTML = '';
+              var optDefault = document.createElement('option');
+              optDefault.value = "";
+              optDefault.textContent = "-- Select Sub-Jobcard --";
+              select.appendChild(optDefault);
+              
+              for (var i = 0; i < list.length; i++) {
+                var opt = document.createElement('option');
+                opt.value = list[i].subJobNo;
+                opt.textContent = list[i].subJobNo + ' (Mean: ' + list[i].meanVal.toFixed(1) + ' ppt | ' + list[i].status + ')';
+                select.appendChild(opt);
+              }
+              
+              select.selectedIndex = selIndex;
+              handleSelectionChange(); // Refresh badge and print button
+            })
+            .getCompletedJobCards();
+        })
+        .withFailureHandler(function(err) {
+          btn.disabled = false;
+          spinner.classList.add('hidden');
+          showMsg("Generation failed: " + err.message, "error");
+        })
+        .generateReport(subJobNo);
+    }
+
+    /**
+     * Triggers the Print Preview sheet construction on backend
+     */
+    function printReport() {
+      var subJobNo = document.getElementById('subJobSelect').value;
+      var btn = document.getElementById('btnPrint');
+      var spinner = document.getElementById('printSpinner');
+      
+      if (!subJobNo) return;
+      
+      btn.disabled = true;
+      spinner.classList.remove('hidden');
+      
+      google.script.run
+        .withSuccessHandler(function(res) {
+          btn.disabled = false;
+          spinner.classList.add('hidden');
+          showMsg("Print preview successfully created in tab 'Print_Preview'!", "success");
+        })
+        .withFailureHandler(function(err) {
+          btn.disabled = false;
+          spinner.classList.add('hidden');
+          showMsg("Print preview generation failed: " + err.message, "error");
+        })
+        .printTestReport(subJobNo);
+    }
+
+    /**
+     * Triggers batch pending report generation
+     */
+    function generateAllPending() {
+      var btn = document.getElementById('btnBulk');
+      var spinner = document.getElementById('bulkSpinner');
+      
+      btn.disabled = true;
+      spinner.classList.remove('hidden');
+      
+      google.script.run
+        .withSuccessHandler(function(res) {
+          btn.disabled = false;
+          spinner.classList.add('hidden');
+          showMsg(res, "success");
+          loadCompletedJobs(); // Reload list
+        })
+        .withFailureHandler(function(err) {
+          btn.disabled = false;
+          spinner.classList.add('hidden');
+          showMsg("Bulk generation failed: " + err.message, "error");
+        })
+        .generateAllPendingReports();
+    }
+
+    function showMsg(text, type) {
+      var msgBox = document.getElementById('messageBox');
+      msgBox.innerHTML = text;
+      msgBox.className = "message " + (type === "success" ? "success-msg" : "error-msg");
+      msgBox.scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

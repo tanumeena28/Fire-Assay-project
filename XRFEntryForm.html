@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <title>XRF Sheet Entry</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0F172A; /* slate-900 */
+      color: #F8FAFC; /* slate-50 */
+      margin: 0;
+      padding: 16px 20px;
+      font-size: 13px;
+      box-sizing: border-box;
+    }
+
+    .container {
+      max-width: 100%;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 8px;
+    }
+
+    .header-title h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #F1F5F9;
+    }
+
+    .header-title p {
+      margin: 2px 0 0 0;
+      font-size: 11px;
+      color: #94A3B8;
+    }
+
+    .card {
+      background-color: #1E293B; /* slate-800 */
+      border: 1px solid #334155; /* slate-700 */
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #3B82F6;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group {
+      margin-bottom: 8px;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: #CBD5E1;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    select, input[type="text"], input[type="number"], input[type="date"] {
+      width: 100%;
+      padding: 5px 8px;
+      border: 1px solid #475569;
+      border-radius: 4px;
+      background-color: #0F172A;
+      color: #FFFFFF;
+      font-size: 11px;
+      box-sizing: border-box;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: #3B82F6;
+    }
+
+    .layout-main {
+      display: grid;
+      grid-template-columns: 3fr 1fr;
+      gap: 16px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    .samples-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .samples-table th {
+      text-align: left;
+      color: #94A3B8;
+      font-weight: 600;
+      padding: 6px 4px;
+      border-bottom: 1px solid #334155;
+      font-size: 9px;
+      text-transform: uppercase;
+    }
+
+    .samples-table td {
+      padding: 6px 4px;
+      border-bottom: 1px solid #1E293B;
+      vertical-align: middle;
+    }
+
+    .element-input {
+      width: 46px !important;
+      padding: 3px 4px !important;
+      font-size: 10px !important;
+      text-align: right;
+      border-radius: 3px !important;
+    }
+
+    .btn-small {
+      background-color: #334155;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .btn-small:hover {
+      background-color: #475569;
+    }
+
+    .footer-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+      border-top: 1px solid #334155;
+      padding-top: 10px;
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      color: white;
+      padding: 8px 20px;
+      border: none;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .btn-submit:hover {
+      background: linear-gradient(135deg, #3B82F6, #2563EB);
+    }
+
+    .btn-submit:disabled {
+      background: #475569;
+      cursor: not-allowed;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #FFF;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .message {
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      font-weight: 500;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .success-msg {
+      background-color: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10B981;
+      color: #34D399;
+    }
+
+    .error-msg {
+      background-color: rgba(239, 68, 68, 0.15);
+      border: 1px solid #EF4444;
+      color: #F87171;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-title">
+        <h2>XRF Analysis & Ledger Sheet Entry</h2>
+        <p>NCH Services Pvt. Ltd. | Assay Laboratory Desk</p>
+      </div>
+      <button class="btn-small" onclick="google.script.host.close()">Close Window</button>
+    </div>
+
+    <div id="messageBox" class="message hidden"></div>
+
+    <!-- Lookup Panel -->
+    <div class="card" style="max-width: 500px; margin-bottom: 12px;">
+      <div class="form-group" style="margin-bottom: 0;">
+        <label for="receiptNo">Enter Receipt or Job Card Number(s)</label>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <input type="text" id="receiptNo" placeholder="E.G. BH-26/27-0002, BHNFAR1-02" style="text-transform: uppercase; flex: 1;">
+          <button type="button" class="btn-small" onclick="fetchSamples()" id="btnFetch">Fetch Job Cards</button>
+        </div>
+        <div style="font-size: 9px; color: #94A3B8; margin-top: 4px;">Supports multiple entries separated by commas.</div>
+      </div>
+    </div>
+
+    <!-- Main Form Panel -->
+    <form id="xrfForm" class="hidden" onsubmit="handleSubmit(event)">
+      <div class="layout-main">
+        
+        <!-- Left Side: Table of Elements -->
+        <div class="card" style="margin-bottom: 0;">
+          <h3>1. Sample Element Percentages (%)</h3>
+          <div class="table-container">
+            <table class="samples-table">
+              <thead>
+                <tr>
+                  <th style="width: 14%;">Job Card No</th>
+                  <th style="width: 8%; text-align: right;">Wt(g)</th>
+                  <th style="width: 6%;">Au</th>
+                  <th style="width: 6%;">Ag</th>
+                  <th style="width: 6%;">Cu</th>
+                  <th style="width: 6%;">Ni</th>
+                  <th style="width: 6%;">Pd</th>
+                  <th style="width: 6%;">Zn</th>
+                  <th style="width: 6%;">Cd</th>
+                  <th style="width: 6%;">Ir</th>
+                  <th style="width: 6%;">Ru</th>
+                  <th style="width: 6%;">Os</th>
+                  <th style="width: 6%;">In</th>
+                  <th style="width: 6%;">Sn</th>
+                  <th style="width: 6%;">Other</th>
+                </tr>
+              </thead>
+              <tbody id="samplesTableBody">
+                <!-- Dynamic Rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right Side: Sidebar Metadata -->
+        <div class="card" style="margin-bottom: 0;">
+          <h3>2. Run Metadata</h3>
+          
+          <div class="form-group">
+            <label for="xrfSheetNo">XRF Sheet No</label>
+            <input type="text" id="xrfSheetNo" placeholder="e.g. 09" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="runDate">Test Date</label>
+            <input type="date" id="runDate" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="temperature">Temperature</label>
+            <input type="text" id="temperature" value="24 c°" required placeholder="e.g. 24 c°">
+          </div>
+          
+          <div class="form-group">
+            <label for="runTime">Exposure Time</label>
+            <input type="text" id="runTime" value="30 second" required placeholder="e.g. 30 second">
+          </div>
+          
+          <div class="form-group">
+            <label for="checkBy">Checked By</label>
+            <input type="text" id="checkBy" required placeholder="e.g. Joni R. Panchal">
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-actions">
+        <button type="button" class="btn-cancel" onclick="google.script.host.close()">Cancel</button>
+        <button type="submit" id="btnSubmit" class="btn-submit">
+          <span id="submitSpinner" class="spinner hidden"></span>Save & Print XRF Sheet
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    var currentSamples = [];
+
+    window.addEventListener('DOMContentLoaded', function() {
+      // Set default test date to today
+      var today = new Date().toISOString().split('T')[0];
+      document.getElementById('runDate').value = today;
+    });
+
+    function fetchSamples() {
+      var query = document.getElementById('receiptNo').value.trim();
+      var btnFetch = document.getElementById('btnFetch');
+      var form = document.getElementById('xrfForm');
+      var msgBox = document.getElementById('messageBox');
+      
+      msgBox.className = "message hidden";
+      
+      if (!query) {
+        showMsg("Please enter Receipt or Job Card Number(s).", "error");
+        return;
+      }
+      
+      btnFetch.disabled = true;
+      btnFetch.textContent = "Loading...";
+      
+      google.script.run
+        .withSuccessHandler(function(samples) {
+          btnFetch.disabled = false;
+          btnFetch.textContent = "Fetch Job Cards";
+          
+          currentSamples = samples;
+          
+          if (samples.length === 0) {
+            form.classList.add('hidden');
+            showMsg("No Job Cards found matching: " + query + ".", "error");
+            return;
+          }
+          
+          if (samples.length > 8) {
+            showMsg("Note: More than 8 samples loaded. Only the first 8 samples will be printed on the XRF sheet.", "success");
+          }
+          
+          var tbody = document.getElementById('samplesTableBody');
+          tbody.innerHTML = '';
+          
+          // Autofill XRF Sheet No from Receipt Batch (e.g. if receipt is BHNFAR12-01, try to set to 12)
+          var subJobNo = samples[0].subJobNo;
+          var match = subJobNo.match(/BHN[F|S]AR(\d+)-/);
+          if (match && match[1]) {
+            document.getElementById('xrfSheetNo').value = ("0" + match[1]).slice(-2);
+          }
+          
+          for (var i = 0; i < samples.length; i++) {
+            var s = samples[i];
+            var tr = document.createElement('tr');
+            
+            // Set defaults based on material
+            var defAu = "0.00";
+            var defAg = "0.00";
+            if (s.material === "Gold") {
+              defAu = "99.53";
+              defAg = "0.00";
+            } else {
+              defAu = "0.00";
+              defAg = "99.90";
+            }
+            
+            tr.innerHTML = 
+              '<td style="font-weight: 600; color: #F1F5F9;">' + s.subJobNo + '</td>' +
+              '<td style="text-align: right; color: #94A3B8; padding-right: 8px;">' + s.weight.toFixed(3) + 'g</td>' +
+              '<td><input type="number" class="element-input" id="Au_' + i + '" step="0.01" min="0" max="100" value="' + defAu + '" required></td>' +
+              '<td><input type="number" class="element-input" id="Ag_' + i + '" step="0.01" min="0" max="100" value="' + defAg + '" required></td>' +
+              '<td><input type="number" class="element-input" id="Cu_' + i + '" step="0.01" min="0" max="100" value="0.00" required></td>' +
+              '<td><input type="number" class="element-input" id="Ni_' + i + '" step="0.01" min="0" max="100" value="0.00" required></td>' +
+              '<td><input type="number" class="element-input" id="Pd_' + i + '" step="0.01" min="0" max="100" value="0.00" required></td>' +
+              '<td><input type="number" class="element-input" id="Zn_' + i + '" step="0.01" min="0" max="100" value="0.00" required></td>' +
+              '<td><input type="number" class="element-input" id="Cd_' + i + '" step="0.01" min="0" max="100" value="0.00" required></td>' +
+              '<td><input type="number" class="element-input" id="Ir_' + i + '" step="0.01" min="0" max="100" value="0.00" required></td>' +
+              '<td><input type="number" class="element-input" id="Ru_' + i + '" step="0.01" min="0" max="100" value="0.00" required></td>' +
+              '<td><input type="number" class="element-input" id="Os_' + i + '" step="0.01" min="0" max="100" value="0.00" required></td>' +
+              '<td><input type="number" class="element-input" id="In_' + i + '" step="0.01" min="0" max="100" value="0.00" required></td>' +
+              '<td><input type="number" class="element-input" id="Sn_' + i + '" step="0.01" min="0" max="100" value="0.00" required></td>' +
+              '<td><input type="number" class="element-input" id="Other_' + i + '" step="0.01" min="0" max="100" value="0.00" required></td>';
+            tbody.appendChild(tr);
+          }
+          
+          form.classList.remove('hidden');
+        })
+        .withFailureHandler(function(err) {
+          btnFetch.disabled = false;
+          btnFetch.textContent = "Fetch Job Cards";
+          showMsg("Failed to load details: " + err.message, "error");
+        })
+        .getXrfPendingSamples(query);
+    }
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      
+      var btn = document.getElementById('btnSubmit');
+      var spinner = document.getElementById('submitSpinner');
+      var receiptNo = document.getElementById('receiptNo').value.trim().toUpperCase();
+      
+      var samplesData = [];
+      for (var i = 0; i < currentSamples.length; i++) {
+        var Au = parseFloat(document.getElementById('Au_' + i).value) || 0;
+        var Ag = parseFloat(document.getElementById('Ag_' + i).value) || 0;
+        var Cu = parseFloat(document.getElementById('Cu_' + i).value) || 0;
+        var Ni = parseFloat(document.getElementById('Ni_' + i).value) || 0;
+        var Pd = parseFloat(document.getElementById('Pd_' + i).value) || 0;
+        var Zn = parseFloat(document.getElementById('Zn_' + i).value) || 0;
+        var Cd = parseFloat(document.getElementById('Cd_' + i).value) || 0;
+        var Ir = parseFloat(document.getElementById('Ir_' + i).value) || 0;
+        var Ru = parseFloat(document.getElementById('Ru_' + i).value) || 0;
+        var Os = parseFloat(document.getElementById('Os_' + i).value) || 0;
+        var In = parseFloat(document.getElementById('In_' + i).value) || 0;
+        var Sn = parseFloat(document.getElementById('Sn_' + i).value) || 0;
+        var Other = parseFloat(document.getElementById('Other_' + i).value) || 0;
+        
+        // Sum validation
+        var sum = Au + Ag + Cu + Ni + Pd + Zn + Cd + Ir + Ru + Os + In + Sn + Other;
+        if (Math.abs(sum - 100.0) > 0.5) {
+          if (!confirm("The sum of elements for sample " + currentSamples[i].subJobNo + " is " + sum.toFixed(2) + "%, which is not exactly 100%. Do you wish to proceed?")) {
+            return;
+          }
+        }
+        
+        samplesData.push({
+          subJobNo: currentSamples[i].subJobNo,
+          customerName: currentSamples[i].customerName,
+          material: currentSamples[i].material,
+          weight: currentSamples[i].weight,
+          declaredFineness: currentSamples[i].declaredFineness,
+          Au: Au,
+          Ag: Ag,
+          Cu: Cu,
+          Ni: Ni,
+          Pd: Pd,
+          Zn: Zn,
+          Cd: Cd,
+          Ir: Ir,
+          Ru: Ru,
+          Os: Os,
+          In: In,
+          Sn: Sn,
+          Other: Other
+        });
+      }
+      
+      var formData = {
+        receiptNo: receiptNo,
+        xrfSheetNo: document.getElementById('xrfSheetNo').value.trim(),
+        date: document.getElementById('runDate').value,
+        temperature: document.getElementById('temperature').value.trim(),
+        time: document.getElementById('runTime').value.trim(),
+        checkBy: document.getElementById('checkBy').value.trim(),
+        samples: samplesData
+      };
+      
+      btn.disabled = true;
+      spinner.classList.remove('hidden');
+      
+      google.script.run
+        .withSuccessHandler(function(res) {
+          btn.disabled = false;
+          spinner.classList.add('hidden');
+          google.script.host.close();
+        })
+        .withFailureHandler(function(err) {
+          btn.disabled = false;
+          spinner.classList.add('hidden');
+          showMsg("Failed to save XRF data: " + err.message, "error");
+        })
+        .saveXrfData(formData);
+    }
+
+    function showMsg(text, type) {
+      var msgBox = document.getElementById('messageBox');
+      msgBox.innerHTML = text;
+      msgBox.className = "message " + (type === "success" ? "success-msg" : "error-msg");
+      msgBox.scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

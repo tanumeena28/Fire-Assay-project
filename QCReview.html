@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <title>Quality Manager Review</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0F172A; /* slate-900 */
+      color: #F8FAFC; /* slate-50 */
+      margin: 0;
+      padding: 16px 20px;
+      font-size: 13px;
+      box-sizing: border-box;
+    }
+
+    .container {
+      max-width: 100%;
+    }
+
+    /* Premium Page Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+    }
+
+    .header-title h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #F1F5F9;
+    }
+
+    .header-title p {
+      margin: 4px 0 0 0;
+      font-size: 11px;
+      color: #94A3B8;
+    }
+
+    /* 2-Column Responsive Grid */
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 20px;
+    }
+
+    .column-left, .column-right {
+      min-width: 0;
+    }
+
+    .card {
+      background-color: #1E293B; /* slate-800 */
+      border: 1px solid #334155; /* slate-700 */
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #3B82F6; /* premium blue accent */
+      border-bottom: 1px solid #334155;
+      padding-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 5px;
+      color: #CBD5E1; /* slate-300 */
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    select, input[type="text"], input[type="number"], textarea {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1px solid #475569; /* slate-600 */
+      border-radius: 6px;
+      background-color: #0F172A; /* slate-900 inputs */
+      color: #FFFFFF;
+      font-size: 12px;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    /* Table formatting */
+    .samples-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 6px;
+      font-size: 11px;
+    }
+
+    .samples-table th {
+      text-align: left;
+      color: #94A3B8;
+      font-weight: 500;
+      padding: 6px 4px;
+      border-bottom: 1px solid #334155;
+      text-transform: uppercase;
+      font-size: 9px;
+    }
+
+    .samples-table td {
+      padding: 8px 4px;
+      border-bottom: 1px solid #1E293B;
+      vertical-align: middle;
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .checkbox-container input[type="checkbox"] {
+      margin: 0;
+      width: 16px;
+      height: 16px;
+      accent-color: #10B981;
+      cursor: pointer;
+    }
+
+    .table-input {
+      padding: 4px 6px !important;
+      font-size: 11px !important;
+      border-radius: 4px !important;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .row .form-group {
+      flex: 1;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 16px;
+      margin-top: 4px;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .radio-option input[type="radio"] {
+      accent-color: #3B82F6;
+      margin: 0;
+    }
+
+    /* Buttons */
+    .btn-small {
+      background-color: #334155;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .btn-small:hover {
+      background-color: #475569;
+    }
+
+    .btn-sync {
+      background-color: #334155;
+      color: #F8FAFC;
+      border: 1px solid #475569;
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-sync:hover {
+      background-color: #475569;
+    }
+
+    .footer-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 14px;
+      margin-top: 10px;
+      border-top: 1px solid #334155;
+      padding-top: 14px;
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      color: white;
+      padding: 10px 24px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-submit:hover {
+      background: linear-gradient(135deg, #3B82F6, #2563EB);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-submit:disabled {
+      background: #475569;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn-cancel {
+      background-color: #334155;
+      color: #CBD5E1;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-cancel:hover {
+      background-color: #475569;
+      color: white;
+    }
+
+    /* Spinner */
+    .spinner {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #FFF;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .message {
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      font-weight: 500;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .success-msg {
+      background-color: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10B981;
+      color: #34D399;
+    }
+
+    .error-msg {
+      background-color: rgba(239, 68, 68, 0.15);
+      border: 1px solid #EF4444;
+      color: #F87171;
+    }
+
+    /* Media query to preserve sidebar usability if needed */
+    @media (max-width: 768px) {
+      .grid-layout {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      body {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-title">
+        <h2>Quality Manager Review Desk</h2>
+        <p>NCH Services Pvt. Ltd., Surat, Gujarat | QC Department</p>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <button class="btn-sync" id="btnSync" onclick="syncPendingQC()">
+          <span id="syncSpinner" class="spinner hidden"></span>Sync Pending QC
+        </button>
+        <button class="btn-small" onclick="google.script.host.close()">Close Window</button>
+      </div>
+    </div>
+
+    <!-- Alert Message Box -->
+    <div id="messageBox" class="message hidden"></div>
+
+    <!-- Select Pending Receipt -->
+    <div class="form-group" style="max-width: 400px; margin-bottom: 16px;">
+      <label for="receiptSelect">Select Pending Receipt No</label>
+      <select id="receiptSelect" onchange="handleReceiptChange()">
+        <option value="">-- Loading... --</option>
+      </select>
+    </div>
+
+    <!-- Main Review Form Container -->
+    <form id="qcForm" class="hidden" onsubmit="handleFormSubmit(event)">
+      <div class="grid-layout">
+        
+        <!-- ================= LEFT COLUMN ================= -->
+        <div class="column-left">
+          
+          <!-- Customer Metadata Header (Read-only reference) -->
+          <div class="card" style="background-color: #0F172A; border-color: #2563EB;">
+            <div style="font-size: 11px; color: #94A3B8;">Customer Ref</div>
+            <div id="custDisplay" style="font-weight: bold; font-size: 14px; color: #F1F5F9; margin-top: 2px;"></div>
+            <div id="materialDisplay" style="font-size: 11px; color: #3B82F6; margin-top: 2px; font-weight: 500;"></div>
+          </div>
+
+          <!-- Card 1: Sample List Table -->
+          <div class="card">
+            <h3>1. Sample Assays</h3>
+            <table class="samples-table">
+              <thead>
+                <tr>
+                  <th style="width: 50%;">Sub-Job No</th>
+                  <th style="text-align: right; width: 30%;">Wt (g)</th>
+                  <th style="text-align: center; width: 20%;">Wt OK</th>
+                </tr>
+              </thead>
+              <tbody id="samplesTableBody">
+                <!-- Dynamic rows injected here -->
+              </tbody>
+            </table>
+          </div>
+          
+        </div>
+        
+        <!-- ================= RIGHT COLUMN ================= -->
+        <div class="column-right">
+          
+          <!-- Card 2: Review Controls -->
+          <div class="card">
+            <h3>2. Audit & Quality Checks</h3>
+            <div class="row">
+              <div class="form-group">
+                <label for="qcDoneBy">QC Verified By</label>
+                <input type="text" id="qcDoneBy" required placeholder="Manager Name">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="form-group">
+                <label>Customer Witnessed</label>
+                <div class="radio-group">
+                  <label class="radio-option"><input type="radio" name="witnessed" id="wit_yes" value="Yes"> Yes</label>
+                  <label class="radio-option"><input type="radio" name="witnessed" id="wit_no" value="No" checked> No</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Testing in Scope</label>
+                <div class="radio-group">
+                  <label class="radio-option"><input type="radio" name="scope" value="Yes" checked> Yes</label>
+                  <label class="radio-option"><input type="radio" name="scope" value="No"> No</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Sample Acceptability Decision</label>
+              <div class="radio-group" style="gap: 24px;">
+                <label class="radio-option" style="font-weight: 600; color: #10B981;">
+                  <input type="radio" name="accepted" value="Yes" checked> ACCEPT SAMPLE
+                </label>
+                <label class="radio-option" style="font-weight: 600; color: #EF4444;">
+                  <input type="radio" name="accepted" value="No"> REJECT SAMPLE
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="remarks">Audit Remarks</label>
+              <textarea id="remarks" rows="2" placeholder="Optional QC notes..."></textarea>
+            </div>
+          </div>
+
+          <!-- Submit Action Buttons -->
+          <div class="footer-actions">
+            <button type="button" class="btn-cancel" onclick="google.script.host.close()">Cancel</button>
+            <button type="submit" id="btnSubmit" class="btn-submit">
+              <span id="submitSpinner" class="spinner hidden"></span>Save Quality Review
+            </button>
+          </div>
+          
+        </div>
+        
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Startup
+    window.addEventListener('DOMContentLoaded', function() {
+      loadPendingReceipts();
+    });
+
+    /**
+     * Syncs new customer receipts to the QC review queue sheet.
+     */
+    function syncPendingQC() {
+      var syncBtn = document.getElementById('btnSync');
+      var spinner = document.getElementById('syncSpinner');
+      
+      syncBtn.disabled = true;
+      spinner.classList.remove('hidden');
+      
+      google.script.run
+        .withSuccessHandler(function(msg) {
+          syncBtn.disabled = false;
+          spinner.classList.add('hidden');
+          showMsg(msg, "success");
+          loadPendingReceipts();
+        })
+        .withFailureHandler(function(err) {
+          syncBtn.disabled = false;
+          spinner.classList.add('hidden');
+          showMsg("Sync failed: " + err.message, "error");
+        })
+        .loadPendingQC();
+    }
+
+    /**
+     * Loads unique pending receipts from the backend sheet.
+     */
+    function loadPendingReceipts() {
+      var select = document.getElementById('receiptSelect');
+      select.innerHTML = '<option value="">-- Loading... --</option>';
+      
+      google.script.run
+        .withSuccessHandler(function(receipts) {
+          select.innerHTML = '';
+          if (receipts.length === 0) {
+            var opt = document.createElement('option');
+            opt.value = "";
+            opt.textContent = "-- No pending QC samples --";
+            select.appendChild(opt);
+            document.getElementById('qcForm').classList.add('hidden');
+            return;
+          }
+          
+          var optDefault = document.createElement('option');
+          optDefault.value = "";
+          optDefault.textContent = "-- Select Receipt --";
+          select.appendChild(optDefault);
+          
+          for (var i = 0; i < receipts.length; i++) {
+            var opt = document.createElement('option');
+            opt.value = receipts[i];
+            opt.textContent = receipts[i];
+            select.appendChild(opt);
+          }
+        })
+        .withFailureHandler(function(err) {
+          showMsg("Failed to load receipts: " + err.message, "error");
+        })
+        .getPendingQCReceipts();
+    }
+
+    /**
+     * Triggers when receipt dropdown selection changes. Injects sample rows.
+     */
+    var currentSamples = [];
+    function handleReceiptChange() {
+      var receiptNo = document.getElementById('receiptSelect').value;
+      var form = document.getElementById('qcForm');
+      var msgBox = document.getElementById('messageBox');
+      
+      msgBox.className = "message hidden";
+      
+      if (!receiptNo) {
+        form.classList.add('hidden');
+        return;
+      }
+      
+      google.script.run
+        .withSuccessHandler(function(samples) {
+          currentSamples = samples;
+          if (samples.length === 0) {
+            form.classList.add('hidden');
+            return;
+          }
+          
+          // Display Metadata Header
+          document.getElementById('custDisplay').textContent = samples[0].customerName;
+          document.getElementById('materialDisplay').textContent = "Material Type: " + samples[0].material;
+          
+          // Set customer witnessed default matching the value from Receiving
+          if (samples[0].witnessed === "Yes") {
+            document.getElementById('wit_yes').checked = true;
+          } else {
+            document.getElementById('wit_no').checked = true;
+          }
+          
+          // Populate Samples Table
+          var tbody = document.getElementById('samplesTableBody');
+          tbody.innerHTML = '';
+          
+          for (var i = 0; i < samples.length; i++) {
+            var s = samples[i];
+            var tr = document.createElement('tr');
+            tr.innerHTML = 
+              '<td style="font-weight: 600; color: #F1F5F9;">' + s.subJobNo + '</td>' +
+              '<td style="text-align: right; color: #94A3B8;">' + s.weight.toFixed(3) + 'g</td>' +
+              '<td class="checkbox-container"><input type="checkbox" id="wt_ok_' + i + '" checked></td>';
+            tbody.appendChild(tr);
+          }
+          
+          form.classList.remove('hidden');
+        })
+        .withFailureHandler(function(err) {
+          showMsg("Failed to load details: " + err.message, "error");
+        })
+        .getQCDetailsForReceipt(receiptNo);
+    }
+
+    /**
+     * Form Submission handler.
+     */
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      
+      var btn = document.getElementById('btnSubmit');
+      var spinner = document.getElementById('submitSpinner');
+      var receiptNo = document.getElementById('receiptSelect').value;
+      
+      var samplesData = [];
+      for (var i = 0; i < currentSamples.length; i++) {
+        samplesData.push({
+          rowNum: currentSamples[i].rowNum,
+          weightOk: document.getElementById('wt_ok_' + i).checked,
+          xrfFineness: 0,
+          plateFineness: 0
+        });
+      }
+      
+      var formData = {
+        receiptNo: receiptNo,
+        xrfCheckBy: "",
+        qcDoneBy: document.getElementById('qcDoneBy').value.trim(),
+        witnessed: document.querySelector('input[name="witnessed"]:checked').value,
+        scope: document.querySelector('input[name="scope"]:checked').value,
+        accepted: document.querySelector('input[name="accepted"]:checked').value,
+        remarks: document.getElementById('remarks').value.trim(),
+        samples: samplesData
+      };
+      
+      btn.disabled = true;
+      spinner.classList.remove('hidden');
+      
+      google.script.run
+        .withSuccessHandler(function(res) {
+          btn.disabled = false;
+          spinner.classList.add('hidden');
+          showMsg(res, "success");
+          
+          // Reset form and reload receipt select
+          document.getElementById('qcForm').reset();
+          document.getElementById('qcForm').classList.add('hidden');
+          loadPendingReceipts();
+        })
+        .withFailureHandler(function(err) {
+          btn.disabled = false;
+          spinner.classList.add('hidden');
+          showMsg("Review failed to save: " + err.message, "error");
+        })
+        .saveQCReview(formData);
+    }
+
+    function showMsg(text, type) {
+      var msgBox = document.getElementById('messageBox');
+      msgBox.innerHTML = text;
+      msgBox.className = "message " + (type === "success" ? "success-msg" : "error-msg");
+      msgBox.scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

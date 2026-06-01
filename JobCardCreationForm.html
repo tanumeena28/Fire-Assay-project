@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <title>Create Job Cards</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0F172A; /* slate-900 */
+      color: #F8FAFC; /* slate-50 */
+      margin: 0;
+      padding: 16px 20px;
+      font-size: 13px;
+      box-sizing: border-box;
+    }
+
+    .container {
+      max-width: 100%;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+    }
+
+    .header-title h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #F1F5F9;
+    }
+
+    .header-title p {
+      margin: 4px 0 0 0;
+      font-size: 11px;
+      color: #94A3B8;
+    }
+
+    .card {
+      background-color: #1E293B; /* slate-800 */
+      border: 1px solid #334155; /* slate-700 */
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #3B82F6; /* premium blue accent */
+      border-bottom: 1px solid #334155;
+      padding-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 5px;
+      color: #CBD5E1; /* slate-300 */
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    select, input[type="text"], input[type="number"], textarea {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1px solid #475569; /* slate-600 */
+      border-radius: 6px;
+      background-color: #0F172A; /* slate-900 inputs */
+      color: #FFFFFF;
+      font-size: 12px;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    .samples-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 6px;
+      font-size: 11px;
+    }
+
+    .samples-table th {
+      text-align: left;
+      color: #94A3B8;
+      font-weight: 500;
+      padding: 6px 4px;
+      border-bottom: 1px solid #334155;
+      text-transform: uppercase;
+      font-size: 9px;
+    }
+
+    .samples-table td {
+      padding: 8px 4px;
+      border-bottom: 1px solid #1E293B;
+      vertical-align: middle;
+    }
+
+    .table-input {
+      padding: 4px 6px !important;
+      font-size: 11px !important;
+      border-radius: 4px !important;
+    }
+
+    .btn-small {
+      background-color: #334155;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .btn-small:hover {
+      background-color: #475569;
+    }
+
+    .footer-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 14px;
+      margin-top: 10px;
+      border-top: 1px solid #334155;
+      padding-top: 14px;
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      color: white;
+      padding: 10px 24px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-submit:hover {
+      background: linear-gradient(135deg, #3B82F6, #2563EB);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-submit:disabled {
+      background: #475569;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn-cancel {
+      background-color: #334155;
+      color: #CBD5E1;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-cancel:hover {
+      background-color: #475569;
+      color: white;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #FFF;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .message {
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      font-weight: 500;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .success-msg {
+      background-color: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10B981;
+      color: #34D399;
+    }
+
+    .error-msg {
+      background-color: rgba(239, 68, 68, 0.15);
+      border: 1px solid #EF4444;
+      color: #F87171;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-title">
+        <h2>Job Card Generation & XRF Entry</h2>
+        <p>NCH Services Pvt. Ltd. | Laboratory Desk</p>
+      </div>
+      <button class="btn-small" onclick="google.script.host.close()">Close Window</button>
+    </div>
+
+    <div id="messageBox" class="message hidden"></div>
+
+    <div class="card" style="max-width: 500px; margin-bottom: 16px;">
+      <div style="display: flex; gap: 10px; align-items: flex-end;">
+        <div class="form-group" style="flex: 1; margin-bottom: 0;">
+          <label for="receiptNo">Enter Receipt Number</label>
+          <input type="text" id="receiptNo" placeholder="e.g. IC00007" style="text-transform: uppercase;">
+        </div>
+        <button class="btn-small" onclick="fetchSamples()" id="btnFetch">Fetch Samples</button>
+      </div>
+    </div>
+
+    <form id="jobCardForm" class="hidden" onsubmit="handleSubmit(event)">
+      <div class="card">
+        <h3>1. Sample Details & Purity Readings</h3>
+        <table class="samples-table">
+          <thead>
+            <tr>
+              <th style="width: 25%;">Sub-Job No</th>
+              <th style="width: 20%; text-align: right;">Wt (g)</th>
+              <th style="width: 25%;">Declared Fineness</th>
+              <th style="width: 30%;">Assigned To</th>
+            </tr>
+          </thead>
+          <tbody id="samplesTableBody">
+            <!-- Dynamic rows injected here -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="footer-actions">
+        <button type="button" class="btn-cancel" onclick="google.script.host.close()">Cancel</button>
+        <button type="submit" id="btnSubmit" class="btn-submit">
+          <span id="submitSpinner" class="spinner hidden"></span>Create Job Cards
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    var currentSamples = [];
+
+    function fetchSamples() {
+      var receiptNo = document.getElementById('receiptNo').value.trim().toUpperCase();
+      var btnFetch = document.getElementById('btnFetch');
+      var form = document.getElementById('jobCardForm');
+      var msgBox = document.getElementById('messageBox');
+      
+      msgBox.className = "message hidden";
+      
+      if (!receiptNo) {
+        showMsg("Please enter a Receipt Number.", "error");
+        return;
+      }
+      
+      btnFetch.disabled = true;
+      btnFetch.textContent = "Loading...";
+      
+      google.script.run
+        .withSuccessHandler(function(samples) {
+          btnFetch.disabled = false;
+          btnFetch.textContent = "Fetch Samples";
+          
+          currentSamples = samples;
+          
+          if (samples.length === 0) {
+            form.classList.add('hidden');
+            showMsg("No pending samples found in Receiving for receipt " + receiptNo + ", or Job Cards are already created.", "error");
+            return;
+          }
+          
+          var tbody = document.getElementById('samplesTableBody');
+          tbody.innerHTML = '';
+          
+          for (var i = 0; i < samples.length; i++) {
+            var s = samples[i];
+            var tr = document.createElement('tr');
+            tr.innerHTML = 
+              '<td style="font-weight: 600; color: #F1F5F9;">' + s.subJobNo + '</td>' +
+              '<td style="text-align: right; color: #94A3B8; padding-right: 15px;">' + s.weight.toFixed(3) + 'g</td>' +
+              '<td>' +
+              '  <select class="table-input" id="declared_' + i + '">' +
+              '    <option value="916">916</option>' +
+              '    <option value="999">999</option>' +
+              '    <option value="999.9">999.9</option>' +
+              '    <option value="750">750</option>' +
+              '    <option value="585">585</option>' +
+              '    <option value="375">375</option>' +
+              '  </select>' +
+              '</td>' +
+              '<td><input type="text" class="table-input" id="assigned_' + i + '" placeholder="Technician"></td>';
+            tbody.appendChild(tr);
+          }
+          
+          form.classList.remove('hidden');
+        })
+        .withFailureHandler(function(err) {
+          btnFetch.disabled = false;
+          btnFetch.textContent = "Fetch Samples";
+          showMsg("Failed to load details: " + err.message, "error");
+        })
+        .getAcceptedSamplesForReceipt(receiptNo);
+    }
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      
+      var btn = document.getElementById('btnSubmit');
+      var spinner = document.getElementById('submitSpinner');
+      var receiptNo = document.getElementById('receiptNo').value.trim().toUpperCase();
+      
+      var samplesData = [];
+      for (var i = 0; i < currentSamples.length; i++) {
+        var declaredVal = document.getElementById('declared_' + i).value;
+        var assignedVal = document.getElementById('assigned_' + i).value.trim();
+        
+        samplesData.push({
+          subJobNo: currentSamples[i].subJobNo,
+          customerName: currentSamples[i].customerName,
+          material: currentSamples[i].material,
+          weight: currentSamples[i].weight,
+          declaredFineness: declaredVal,
+          assignedTo: assignedVal
+        });
+      }
+      
+      var formData = {
+        receiptNo: receiptNo,
+        samples: samplesData
+      };
+      
+      btn.disabled = true;
+      spinner.classList.remove('hidden');
+      
+      google.script.run
+        .withSuccessHandler(function(res) {
+          btn.disabled = false;
+          spinner.classList.add('hidden');
+          showMsg(res, "success");
+          
+          document.getElementById('jobCardForm').reset();
+          document.getElementById('jobCardForm').classList.add('hidden');
+          document.getElementById('receiptNo').value = "";
+        })
+        .withFailureHandler(function(err) {
+          btn.disabled = false;
+          spinner.classList.add('hidden');
+          showMsg("Failed to generate job cards: " + err.message, "error");
+        })
+        .saveJobCards(formData);
+    }
+
+    function showMsg(text, type) {
+      var msgBox = document.getElementById('messageBox');
+      msgBox.innerHTML = text;
+      msgBox.className = "message " + (type === "success" ? "success-msg" : "error-msg");
+      msgBox.scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

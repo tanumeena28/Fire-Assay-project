@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <title>Fire Assay Lab Entry</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0F172A; /* slate-900 */
+      color: #F8FAFC; /* slate-50 */
+      margin: 0;
+      padding: 16px 20px;
+      font-size: 13px;
+      box-sizing: border-box;
+    }
+
+    .container {
+      max-width: 100%;
+    }
+
+    /* Premium Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+    }
+
+    .header-title h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #F1F5F9;
+    }
+
+    .header-title p {
+      margin: 4px 0 0 0;
+      font-size: 11px;
+      color: #94A3B8;
+    }
+
+    /* Top & Bottom Layout to allow full width for repeating tables */
+    .top-layout {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .card-half {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .bottom-layout {
+      width: 100%;
+    }
+
+    /* Card Panels */
+    .card {
+      background-color: #1E293B; /* slate-800 */
+      border: 1px solid #334155; /* slate-700 */
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #3B82F6; /* premium blue */
+      border-bottom: 1px solid #334155;
+      padding-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: #CBD5E1;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    select, input[type="text"], input[type="number"], input[type="date"], textarea {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      background-color: #0F172A;
+      color: #FFFFFF;
+      font-size: 12px;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .row .form-group {
+      flex: 1;
+    }
+
+    /* Calibration status styles */
+    .cg-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+      margin-top: 6px;
+      text-align: center;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .cg-badge-valid {
+      background-color: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10B981;
+      color: #34D399;
+    }
+
+    .cg-badge-invalid {
+      background-color: rgba(239, 68, 68, 0.15);
+      border: 1px solid #EF4444;
+      color: #F87171;
+    }
+
+    /* Samples table styles */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    .samples-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .samples-table th {
+      color: #94A3B8;
+      font-weight: 600;
+      padding: 8px 6px;
+      border-bottom: 2px solid #334155;
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .samples-table td {
+      padding: 8px 6px;
+      border-bottom: 1px solid #334155;
+      vertical-align: middle;
+    }
+
+    .table-input {
+      padding: 6px 8px !important;
+      font-size: 11px !important;
+      border-radius: 4px !important;
+    }
+
+    .table-input-center {
+      text-align: center !important;
+    }
+
+    .table-input-right {
+      text-align: right !important;
+    }
+
+    /* Hide Chrome/Safari/Edge/Opera number input spin arrows */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    /* Hide Firefox number input spin arrows */
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+
+    .btn-remove {
+      background-color: rgba(239, 68, 68, 0.15);
+      color: #F87171;
+      border: 1px solid #EF4444;
+      border-radius: 4px;
+      padding: 3px 6px;
+      cursor: pointer;
+      font-size: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-remove:hover {
+      background-color: #EF4444;
+      color: white;
+    }
+
+    .btn-add {
+      background-color: #334155;
+      color: #3B82F6;
+      border: 1px solid #3B82F6;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .btn-add:hover {
+      background-color: #3B82F6;
+      color: white;
+    }
+
+    /* Footer actions */
+    .footer-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 14px;
+      margin-top: 10px;
+      border-top: 1px solid #334155;
+      padding-top: 14px;
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      color: white;
+      padding: 10px 24px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-submit:hover {
+      background: linear-gradient(135deg, #3B82F6, #2563EB);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-submit:disabled {
+      background: #475569;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn-cancel {
+      background-color: #334155;
+      color: #CBD5E1;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-cancel:hover {
+      background-color: #475569;
+      color: white;
+    }
+
+    .btn-small {
+      background-color: #334155;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .btn-small:hover {
+      background-color: #475569;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #FFF;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .message {
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      font-weight: 500;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .success-msg {
+      background-color: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10B981;
+      color: #34D399;
+    }
+
+    .error-msg {
+      background-color: rgba(239, 68, 68, 0.15);
+      border: 1px solid #EF4444;
+      color: #F87171;
+    }
+
+    .help-text {
+      font-size: 10px;
+      color: #94A3B8;
+      margin-top: 2px;
+    }
+
+    /* Small badge inside rows */
+    .info-badge {
+      display: inline-block;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-size: 9px;
+      font-weight: bold;
+      background-color: #1E293B;
+      color: #94A3B8;
+      border: 1px solid #334155;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-title">
+        <h2>Fire Assay Lab Entry Desk</h2>
+        <p>NCH Services Pvt. Ltd., Surat, Gujarat | Testing Department</p>
+      </div>
+      <button class="btn-small" onclick="google.script.host.close()">Close Window</button>
+    </div>
+
+    <!-- Alert message -->
+    <div id="messageBox" class="message hidden"></div>
+
+    <form id="faForm" onsubmit="handleFormSubmit(event)">
+      <!-- Top Section: Side-by-side Batch Params and Calibration Gold -->
+      <div class="top-layout">
+        <!-- Card 1: General Info -->
+        <div class="card card-half">
+          <h3>1. Batch Parameters</h3>
+          <div class="row">
+            <div class="form-group" style="flex: 1;">
+              <label for="batchDate">Batch Date</label>
+              <input type="date" id="batchDate" required>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label for="testedBy">Tested By</label>
+              <input type="text" id="testedBy" required placeholder="Staff Name">
+            </div>
+          </div>
+          <div class="row" style="margin-top: 8px;">
+            <div class="form-group" style="flex: 1;">
+              <label for="cupelNo">Cupel No</label>
+              <input type="text" id="cupelNo" required placeholder="e.g. 1" value="1">
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label for="sheetNo">Sheet Number</label>
+              <input type="text" id="sheetNo" required placeholder="e.g. 3" value="3">
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Calibration Gold -->
+        <div class="card card-half">
+          <h3>2. Calibration Gold (CG)</h3>
+          <div class="row" style="margin-bottom: 8px;">
+            <div class="form-group" style="flex: 1;">
+              <label for="cgSerialNo1">CG1 Crucible</label>
+              <input type="text" id="cgSerialNo1" required placeholder="e.g. 2" value="2">
+            </div>
+            <div class="form-group" style="flex: 1.5;">
+              <label for="cgInitialWt1">CG1 Init (mg)</label>
+              <input type="number" id="cgInitialWt1" step="0.001" min="0.001" required placeholder="0.000" oninput="updateAllCalculations()">
+            </div>
+            <div class="form-group" style="flex: 1.5;">
+              <label for="cgFinalWt1">CG1 Fin (mg)</label>
+              <input type="number" id="cgFinalWt1" step="0.001" min="0.001" required placeholder="0.000" oninput="updateAllCalculations()">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-group" style="flex: 1;">
+              <label for="cgSerialNo2">CG2 Crucible</label>
+              <input type="text" id="cgSerialNo2" required placeholder="e.g. 11" value="11">
+            </div>
+            <div class="form-group" style="flex: 1.5;">
+              <label for="cgInitialWt2">CG2 Init (mg)</label>
+              <input type="number" id="cgInitialWt2" step="0.001" min="0.001" required placeholder="0.000" oninput="updateAllCalculations()">
+            </div>
+            <div class="form-group" style="flex: 1.5;">
+              <label for="cgFinalWt2">CG2 Fin (mg)</label>
+              <input type="number" id="cgFinalWt2" step="0.001" min="0.001" required placeholder="0.000" oninput="updateAllCalculations()">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 10px; margin-bottom: 0;">
+            <label>CG Average Fineness</label>
+            <div id="cgFinenessDisplay" class="cg-badge cg-badge-invalid">0.00 ppt</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Section: Full Width for repeating samples table -->
+      <div class="bottom-layout">
+        <!-- Card 3: Repeating Sample Rows -->
+        <div class="card">
+          <h3>3. Batch Sample Assays (Double Test)</h3>
+          <div class="table-container">
+            <table class="samples-table">
+              <thead>
+                <tr>
+                  <th style="width: 15%; text-align: left;">Sub-Job Number</th>
+                  <th style="width: 7%; text-align: right;">Sample Wt</th>
+                  <th style="width: 6%; text-align: right;">XRF (ppt)</th>
+                  <th style="width: 4%; text-align: center;">Cruc 1</th>
+                  <th style="width: 8%; text-align: right;">Init 1 (mg)</th>
+                  <th style="width: 8%; text-align: right;">Fin 1 (mg)</th>
+                  <th style="width: 4%; text-align: center;">Cruc 2</th>
+                  <th style="width: 8%; text-align: right;">Init 2 (mg)</th>
+                  <th style="width: 8%; text-align: right;">Fin 2 (mg)</th>
+                  <th style="width: 6%; text-align: right;">Return (g)</th>
+                  <th style="width: 8%; text-align: right;">Mean Value</th>
+                  <th style="width: 8%; text-align: right;">Cornet Wt</th>
+                  <th style="width: 6%; text-align: right;">Variation</th>
+                  <th style="width: 4%; text-align: center;"></th>
+                </tr>
+              </thead>
+              <tbody id="samplesTableBody">
+                <!-- Dynamic rows appended here -->
+              </tbody>
+            </table>
+          </div>
+
+          <button type="button" class="btn-add" onclick="addNewRow()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add Sample Row
+          </button>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="footer-actions">
+        <button type="button" class="btn-cancel" onclick="google.script.host.close()">Cancel</button>
+        <button type="submit" id="btnSubmit" class="btn-submit">
+          <span id="spinner" class="spinner hidden"></span>Save Assay Batch
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    var pendingJobCards = [];
+    var rowCounter = 0;
+
+    // Startup
+    window.addEventListener('DOMContentLoaded', function() {
+      // Set date to today
+      var today = new Date().toISOString().split('T')[0];
+      document.getElementById('batchDate').value = today;
+
+      // Load pending job cards from sheets
+      loadJobCards();
+    });
+
+    /**
+     * Loads job cards with "Pending" status from backend
+     */
+    function loadJobCards() {
+      google.script.run
+        .withSuccessHandler(function(list) {
+          pendingJobCards = list;
+          // Add first sample row automatically
+          addNewRow();
+        })
+        .withFailureHandler(function(err) {
+          showMsg("Failed to load job cards: " + err.message, "error");
+        })
+        .getPendingJobCards();
+    }
+
+    /**
+     * Appends a new sample row to the repeating table body
+     */
+    function addNewRow() {
+      var tbody = document.getElementById('samplesTableBody');
+      var rowCount = tbody.getElementsByTagName('tr').length;
+      
+      if (rowCount >= 10) {
+        showMsg("Maximum 10 samples are allowed per batch.", "error");
+        return;
+      }
+
+      var tr = document.createElement('tr');
+      tr.id = 'row_' + rowCounter;
+      
+      // Generate options for dropdown
+      var optionsHtml = '<option value="">-- Select Sub-Job --</option>';
+      for (var i = 0; i < pendingJobCards.length; i++) {
+        var jc = pendingJobCards[i];
+        optionsHtml += '<option value="' + jc.subJobNo + '">' + jc.subJobNo + ' (' + jc.custName + ' - ' + jc.xrfAu.toFixed(1) + ' ppt)</option>';
+      }
+
+      tr.innerHTML = 
+        '<td>' +
+        '  <select class="table-input" id="subJob_' + rowCounter + '" onchange="handleSubJobChange(' + rowCounter + ')" required>' +
+        optionsHtml +
+        '  </select>' +
+        '</td>' +
+        '<td style="text-align: right; font-weight: 500; font-size: 11px; color: #E2E8F0;" id="sampleWtDisplay_' + rowCounter + '">0.000</td>' +
+        '<td style="text-align: right; font-weight: 500; font-size: 11px; color: #E2E8F0;" id="xrfDisplay_' + rowCounter + '">0.0</td>' +
+        '<td><input type="text" class="table-input table-input-center" id="serial1_' + rowCounter + '" required placeholder="e.g. 1"></td>' +
+        '<td><input type="number" class="table-input table-input-right" id="init1_' + rowCounter + '" step="0.001" min="0.001" required placeholder="0.000" oninput="updateAllCalculations()"></td>' +
+        '<td><input type="number" class="table-input table-input-right" id="fin1_' + rowCounter + '" step="0.001" min="0.001" required placeholder="0.000" oninput="updateAllCalculations()"></td>' +
+        '<td><input type="text" class="table-input table-input-center" id="serial2_' + rowCounter + '" required placeholder="e.g. 3"></td>' +
+        '<td><input type="number" class="table-input table-input-right" id="init2_' + rowCounter + '" step="0.001" min="0.001" required placeholder="0.000" oninput="updateAllCalculations()"></td>' +
+        '<td><input type="number" class="table-input table-input-right" id="fin2_' + rowCounter + '" step="0.001" min="0.001" required placeholder="0.000" oninput="updateAllCalculations()"></td>' +
+        '<td><input type="number" class="table-input table-input-right" id="ret_' + rowCounter + '" step="0.001" min="0.000" placeholder="0.000"></td>' +
+        '<td style="text-align: right; font-weight: bold; font-size: 11px; color: #F1F5F9;" id="meanDisplay_' + rowCounter + '">0.00 ppt</td>' +
+        '<td style="text-align: right; font-weight: bold; font-size: 11px; color: #F1F5F9;" id="cornetDisplay_' + rowCounter + '">0.000</td>' +
+        '<td style="text-align: right; font-weight: bold; font-size: 11px; color: #F1F5F9;" id="variationDisplay_' + rowCounter + '">0.00</td>' +
+        '<td style="text-align: center;"><button type="button" class="btn-remove" onclick="removeRow(' + rowCounter + ')">Remove</button></td>';
+
+      tbody.appendChild(tr);
+      rowCounter++;
+      updateAllCalculations();
+    }
+
+    /**
+     * Removes a row by row ID
+     */
+    function removeRow(id) {
+      var row = document.getElementById('row_' + id);
+      if (row) {
+        row.parentNode.removeChild(row);
+      }
+      updateAllCalculations();
+    }
+
+    /**
+     * Auto-fills weights and XRF values from selected pending job card
+     */
+    function handleSubJobChange(id) {
+      var val = document.getElementById('subJob_' + id).value;
+      var sampleWtDisp = document.getElementById('sampleWtDisplay_' + id);
+      var xrfDisp = document.getElementById('xrfDisplay_' + id);
+
+      if (!val) {
+        sampleWtDisp.textContent = "0.000";
+        xrfDisp.textContent = "0.0";
+        updateAllCalculations();
+        return;
+      }
+
+      var card = pendingJobCards.find(function(c) {
+        return c.subJobNo === val;
+      });
+
+      if (card) {
+        sampleWtDisp.textContent = card.weight.toFixed(3);
+        xrfDisp.textContent = card.xrfAu.toFixed(1);
+      } else {
+        sampleWtDisp.textContent = "0.000";
+        xrfDisp.textContent = "0.0";
+      }
+      updateAllCalculations();
+    }
+
+    /**
+     * Instantly calculates CG Fineness and Mean Fineness for all active sample rows in UI
+     */
+    function updateAllCalculations() {
+      // 1. Calculate Calibration Gold Fineness
+      var cgInit1 = parseFloat(document.getElementById('cgInitialWt1').value) || 0;
+      var cgFin1 = parseFloat(document.getElementById('cgFinalWt1').value) || 0;
+      var cgInit2 = parseFloat(document.getElementById('cgInitialWt2').value) || 0;
+      var cgFin2 = parseFloat(document.getElementById('cgFinalWt2').value) || 0;
+      
+      var cgDisplay = document.getElementById('cgFinenessDisplay');
+
+      var cgFineness1 = 0;
+      var cgFineness2 = 0;
+      var cgFinenessAvg = 0;
+      var hasValidCg = false;
+      
+      if (cgInit1 > 0 && cgInit2 > 0) {
+        cgFineness1 = (cgFin1 / cgInit1) * 1000;
+        cgFineness2 = (cgFin2 / cgInit2) * 1000;
+        cgFinenessAvg = (cgFineness1 + cgFineness2) / 2;
+        
+        cgDisplay.textContent = cgFinenessAvg.toFixed(2) + " ppt (CG1: " + cgFineness1.toFixed(1) + ", CG2: " + cgFineness2.toFixed(1) + ")";
+        
+        // Show validation badge status
+        if (cgFinenessAvg >= 999.5 && cgFinenessAvg <= 1000.5) {
+          cgDisplay.className = "cg-badge cg-badge-valid";
+          hasValidCg = true;
+        } else {
+          cgDisplay.className = "cg-badge cg-badge-invalid";
+        }
+      } else {
+        cgDisplay.textContent = "0.00 ppt";
+        cgDisplay.className = "cg-badge cg-badge-invalid";
+      }
+
+      // 2. Loop over each active sample row
+      var tbody = document.getElementById('samplesTableBody');
+      var rows = tbody.getElementsByTagName('tr');
+
+      for (var i = 0; i < rows.length; i++) {
+        var tr = rows[i];
+        var id = tr.id.split('_')[1];
+
+        var init1 = parseFloat(document.getElementById('init1_' + id).value) || 0;
+        var fin1 = parseFloat(document.getElementById('fin1_' + id).value) || 0;
+        var init2 = parseFloat(document.getElementById('init2_' + id).value) || 0;
+        var fin2 = parseFloat(document.getElementById('fin2_' + id).value) || 0;
+        
+        var sampleWt = parseFloat(document.getElementById('sampleWtDisplay_' + id).textContent) || 0;
+        var xrfAu = parseFloat(document.getElementById('xrfDisplay_' + id).textContent) || 0;
+        
+        var meanDisplay = document.getElementById('meanDisplay_' + id);
+        var cornetDisplay = document.getElementById('cornetDisplay_' + id);
+        var variationDisplay = document.getElementById('variationDisplay_' + id);
+
+        var cornetWt = 0;
+        var mean = 0;
+        var variation = 0;
+
+        if (init1 > 0 && fin1 > 0 && init2 > 0 && fin2 > 0) {
+          cornetWt = (fin1 + fin2) / 1000;
+        }
+        cornetDisplay.textContent = cornetWt.toFixed(3);
+
+        if (hasValidCg && init1 > 0 && fin1 > 0 && init2 > 0 && fin2 > 0) {
+          // Correction factor: 999.9 / cgFinenessAvg
+          var factor = 999.9 / cgFinenessAvg;
+          
+          var rawFineness1 = (fin1 / init1) * 1000;
+          var rawFineness2 = (fin2 / init2) * 1000;
+          
+          var correctedFineness1 = Math.round(rawFineness1 * factor * 10) / 10;
+          var correctedFineness2 = Math.round(rawFineness2 * factor * 10) / 10;
+          mean = (correctedFineness1 + correctedFineness2) / 2;
+          
+          if (mean < 0) mean = 0;
+          meanDisplay.textContent = mean.toFixed(2) + " ppt";
+          meanDisplay.style.color = "#34D399"; // light green
+          
+          // Calculate variation
+          var subJobVal = document.getElementById('subJob_' + id).value;
+          if (subJobVal === "Check Gold") {
+            variation = 0;
+          } else {
+            variation = mean - xrfAu;
+          }
+          
+          var sign = variation >= 0 ? "+" : "";
+          variationDisplay.textContent = sign + variation.toFixed(2);
+          
+          if (variation < 0) {
+            variationDisplay.style.color = "#F87171"; // red-400
+          } else {
+            variationDisplay.style.color = "#34D399"; // green-400
+          }
+        } else {
+          meanDisplay.textContent = "0.00 ppt";
+          meanDisplay.style.color = "#94A3B8"; // light gray
+          cornetDisplay.textContent = "0.000";
+          variationDisplay.textContent = "0.00";
+          variationDisplay.style.color = "#94A3B8";
+        }
+      }
+    }
+
+    /**
+     * Validates inputs and submits form data to Google Apps Script backend
+     */
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      
+      var btn = document.getElementById('btnSubmit');
+      var spinner = document.getElementById('spinner');
+      var msgBox = document.getElementById('messageBox');
+      
+      msgBox.className = "message hidden";
+
+      // Validate CG Fineness bounds
+      var cgInit1 = parseFloat(document.getElementById('cgInitialWt1').value) || 0;
+      var cgFin1 = parseFloat(document.getElementById('cgFinalWt1').value) || 0;
+      var cgInit2 = parseFloat(document.getElementById('cgInitialWt2').value) || 0;
+      var cgFin2 = parseFloat(document.getElementById('cgFinalWt2').value) || 0;
+      
+      var cgFineness1 = (cgFin1 / cgInit1) * 1000;
+      var cgFineness2 = (cgFin2 / cgInit2) * 1000;
+      var cgFinenessAvg = (cgFineness1 + cgFineness2) / 2;
+
+      if (cgFinenessAvg < 999.5 || cgFinenessAvg > 1000.5) {
+        showMsg("Error: Calibration Gold average fineness (" + cgFinenessAvg.toFixed(2) + " ppt) must be between 999.5 and 1000.5 ppt.", "error");
+        return;
+      }
+
+      // Compile sample rows
+      var tbody = document.getElementById('samplesTableBody');
+      var rows = tbody.getElementsByTagName('tr');
+
+      if (rows.length === 0) {
+        showMsg("Please add at least one sample to this batch.", "error");
+        return;
+      }
+
+      var samplesList = [];
+      var duplicateCheck = {};
+
+      for (var i = 0; i < rows.length; i++) {
+        var tr = rows[i];
+        var id = tr.id.split('_')[1];
+
+        var subJobNo = document.getElementById('subJob_' + id).value;
+        if (!subJobNo) {
+          showMsg("Please select a valid Sub-Job Number for all rows.", "error");
+          return;
+        }
+
+        if (duplicateCheck[subJobNo]) {
+          showMsg("Duplicate Sub-Job Number (" + subJobNo + ") detected in the batch. Each sample can only be added once.", "error");
+          return;
+        }
+        duplicateCheck[subJobNo] = true;
+
+        var serialNo1 = document.getElementById('serial1_' + id).value.trim();
+        var init1 = parseFloat(document.getElementById('init1_' + id).value);
+        var fin1 = parseFloat(document.getElementById('fin1_' + id).value);
+        var serialNo2 = document.getElementById('serial2_' + id).value.trim();
+        var init2 = parseFloat(document.getElementById('init2_' + id).value);
+        var fin2 = parseFloat(document.getElementById('fin2_' + id).value);
+        var retWt = parseFloat(document.getElementById('ret_' + id).value) || 0;
+
+        if (!serialNo1 || !serialNo2) {
+          showMsg("Please enter Crucible numbers for all sample duplicates.", "error");
+          return;
+        }
+
+        if (isNaN(init1) || init1 <= 0 || isNaN(fin1) || fin1 <= 0 || isNaN(init2) || init2 <= 0 || isNaN(fin2) || fin2 <= 0) {
+          showMsg("Please enter valid positive weights for all sample readings.", "error");
+          return;
+        }
+
+        // Retrieve corresponding job card weights to save in sheet
+        var card = pendingJobCards.find(function(c) {
+          return c.subJobNo === subJobNo;
+        });
+
+        samplesList.push({
+          subJobNo: subJobNo,
+          weight: card ? card.weight : 0,
+          xrfAu: card ? card.xrfAu : 0,
+          serialNo1: serialNo1,
+          initialWt1: init1,
+          finalWt1: fin1,
+          serialNo2: serialNo2,
+          initialWt2: init2,
+          finalWt2: fin2,
+          returnWeight: retWt
+        });
+      }
+
+      // Package full payload
+      var payload = {
+        batchDate: document.getElementById('batchDate').value,
+        testedBy: document.getElementById('testedBy').value.trim(),
+        cupelNo: document.getElementById('cupelNo').value.trim(),
+        sheetNo: document.getElementById('sheetNo').value.trim(),
+        cgSerialNo1: document.getElementById('cgSerialNo1').value.trim(),
+        cgInitialWt1: cgInit1,
+        cgFinalWt1: cgFin1,
+        cgSerialNo2: document.getElementById('cgSerialNo2').value.trim(),
+        cgInitialWt2: cgInit2,
+        cgFinalWt2: cgFin2,
+        samples: samplesList
+      };
+
+      btn.disabled = true;
+      spinner.classList.remove('hidden');
+
+      google.script.run
+        .withSuccessHandler(function(summary) {
+          btn.disabled = false;
+          spinner.classList.add('hidden');
+          showMsg(summary, "success");
+          
+          // Clear form and reset samples table after brief success display
+          document.getElementById('faForm').reset();
+          tbody.innerHTML = '';
+          rowCounter = 0;
+          
+          setTimeout(function() {
+            google.script.host.close();
+          }, 3500);
+        })
+        .withFailureHandler(function(err) {
+          btn.disabled = false;
+          spinner.classList.add('hidden');
+          showMsg("Failed to save batch: " + err.message, "error");
+        })
+        .saveFireAssayBatch(payload);
+    }
+
+    function showMsg(text, type) {
+      var msgBox = document.getElementById('messageBox');
+      msgBox.innerHTML = text.replace(/\n/g, '<br>');
+      msgBox.className = "message " + (type === "success" ? "success-msg" : "error-msg");
+      msgBox.scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

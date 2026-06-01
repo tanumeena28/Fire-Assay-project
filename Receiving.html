@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <title>New Customer Receipt</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0F172A; /* slate-900 */
+      color: #F8FAFC; /* slate-50 */
+      margin: 0;
+      padding: 16px 20px;
+      font-size: 13px;
+      box-sizing: border-box;
+    }
+
+    .container {
+      max-width: 100%;
+    }
+
+    /* Premium Page Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+    }
+
+    .header-title h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #F1F5F9;
+    }
+
+    .header-title p {
+      margin: 4px 0 0 0;
+      font-size: 11px;
+      color: #94A3B8;
+    }
+
+    /* 2-Column Responsive Grid */
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    /* Card Panels */
+    .card {
+      background-color: #1E293B; /* slate-800 */
+      border: 1px solid #334155; /* slate-700 */
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #3B82F6; /* premium blue accent */
+      border-bottom: 1px solid #334155;
+      padding-bottom: 6px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 5px;
+      color: #CBD5E1; /* slate-300 */
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    select, input[type="text"], input[type="number"], textarea {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1px solid #475569; /* slate-600 */
+      border-radius: 6px;
+      background-color: #0F172A; /* slate-900 inputs */
+      color: #FFFFFF;
+      font-size: 12px;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    /* Readonly Auto-fill fields */
+    .readonly-field {
+      background-color: #1E293B !important;
+      border-color: #334155 !important;
+      color: #94A3B8 !important;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .row .form-group {
+      flex: 1;
+    }
+
+    /* Radio buttons row */
+    .radio-group {
+      display: flex;
+      gap: 16px;
+      margin-top: 4px;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .radio-option input[type="radio"] {
+      accent-color: #3B82F6;
+      margin: 0;
+    }
+
+    /* Scrollable Samples Weights container */
+    .weights-panel {
+      min-height: 120px;
+      max-height: 165px;
+      overflow-y: auto;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      padding: 10px;
+      background-color: #0F172A;
+      box-sizing: border-box;
+    }
+
+    .weight-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .weight-row span {
+      font-size: 11px;
+      color: #94A3B8;
+      width: 90px;
+      font-weight: 500;
+    }
+
+    .weight-row input {
+      flex: 1;
+    }
+
+    /* Buttons */
+    .btn-small {
+      background-color: #334155;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .btn-small:hover {
+      background-color: #475569;
+    }
+
+    .footer-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 14px;
+      margin-top: 10px;
+      border-top: 1px solid #334155;
+      padding-top: 14px;
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      color: white;
+      padding: 10px 24px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-submit:hover {
+      background: linear-gradient(135deg, #3B82F6, #2563EB);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-submit:disabled {
+      background: #475569;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn-cancel {
+      background-color: #334155;
+      color: #CBD5E1;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-cancel:hover {
+      background-color: #475569;
+      color: white;
+    }
+
+    /* Spinner Loading */
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #FFF;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .message {
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      font-weight: 500;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .success-msg {
+      background-color: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10B981;
+      color: #34D399;
+    }
+
+    .error-msg {
+      background-color: rgba(239, 68, 68, 0.15);
+      border: 1px solid #EF4444;
+      color: #F87171;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-title">
+        <h2>New Customer Receipt Form</h2>
+        <p>NCH Services Pvt. Ltd., Surat, Gujarat | Receiving Desk</p>
+      </div>
+      <button class="btn-small" onclick="google.script.host.close()">Close Window</button>
+    </div>
+
+    <!-- Message Alert Box -->
+    <div id="messageBox" class="message hidden"></div>
+
+    <form id="receiptForm" onsubmit="handleSubmit(event)">
+      <div class="grid-layout">
+        
+        <!-- ================= LEFT COLUMN ================= -->
+        <div class="column-left">
+          
+          <!-- Card 1: Customer Info -->
+          <div class="card">
+            <h3>1. Customer Details</h3>
+            <div class="form-group">
+              <label for="customerName">Customer Name</label>
+              <select id="customerName" onchange="handleCustomerChange()" required>
+                <option value="">-- Loading Customer List... --</option>
+              </select>
+            </div>
+            
+            <div class="row">
+              <div class="form-group">
+                <label for="contactNo">Contact Number</label>
+                <input type="text" id="contactNo" class="readonly-field" readonly placeholder="Select Customer">
+              </div>
+              <div class="form-group">
+                <label for="gstNo">GST Number</label>
+                <input type="text" id="gstNo" class="readonly-field" readonly placeholder="Select Customer">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="address">Address</label>
+              <input type="text" id="address" class="readonly-field" readonly placeholder="Select Customer Address">
+            </div>
+            
+            <div class="form-group">
+              <label for="certificateName">Certificate Name (Printed on Report)</label>
+              <input type="text" id="certificateName" required placeholder="Enter name to print on certificate">
+            </div>
+          </div>
+          
+          <!-- Card 2: Process & Billing Info -->
+          <div class="card">
+            <h3>2. Process & Billing Details</h3>
+            <div class="row">
+              <div class="form-group">
+                <label for="processName">Process Name</label>
+                <select id="processName">
+                  <option value="IS 1418 Fire Assay Report">IS 1418 Fire Assay Report</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="rate">Rate per Sample (₹)</label>
+                <input type="number" id="rate" value="200" min="0" required>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="form-group">
+                <label for="paymentStatus">Payment Status</label>
+                <select id="paymentStatus">
+                  <option value="Pending">Pending</option>
+                  <option value="Paid">Paid</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="sampleCondition">Sample Condition</label>
+                <select id="sampleCondition">
+                  <option value="Acceptable">Acceptable</option>
+                  <option value="Not Acceptable">Not Acceptable</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="receivedBy">Received By (Staff Name)</label>
+              <input type="text" id="receivedBy" required placeholder="Enter staff name">
+            </div>
+          </div>
+          
+        </div>
+        
+        <!-- ================= RIGHT COLUMN ================= -->
+        <div class="column-right">
+          
+          <!-- Card 3: Sample & Weights Info -->
+          <div class="card">
+            <h3>3. Material & Sample Configuration</h3>
+            <div class="form-group" style="margin-bottom: 12px;">
+              <label for="materialType">Material Type</label>
+              <select id="materialType" onchange="handleMaterialTypeChange()">
+                <option value="Gold">Gold</option>
+                <option value="Silver">Silver</option>
+                <option value="Both">Both (Gold & Silver)</option>
+              </select>
+            </div>
+
+            <!-- Single Material Configuration -->
+            <div id="singleConfig">
+              <div class="row" style="align-items: center; margin-bottom: 12px;">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label for="noOfSamples">No. of Samples</label>
+                  <div style="display: flex; gap: 6px; align-items: center;">
+                    <button type="button" class="btn-small" onclick="adjustSamples(-1)">-</button>
+                    <input type="number" id="noOfSamples" value="1" min="1" max="15" onchange="generateWeightRows()" style="text-align: center; font-weight: bold; width: 50px;">
+                    <button type="button" class="btn-small" onclick="adjustSamples(1)">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <label>Sample Weights (g)</label>
+              <div class="weights-panel" id="weightsContainer">
+                <!-- Dynamically populated by generateWeightRows() -->
+              </div>
+            </div>
+
+            <!-- Both Gold & Silver Configuration -->
+            <div id="bothConfig" class="hidden">
+              <div style="border-bottom: 1px solid #334155; padding-bottom: 8px; margin-bottom: 8px;">
+                <div class="row" style="align-items: center; margin-bottom: 8px;">
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label style="color: #FBBF24;">Gold Samples</label>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                      <button type="button" class="btn-small" onclick="adjustGoldSamples(-1)">-</button>
+                      <input type="number" id="goldNoOfSamples" value="1" min="1" max="15" onchange="generateGoldWeightRows()" style="text-align: center; font-weight: bold; width: 50px;">
+                      <button type="button" class="btn-small" onclick="adjustGoldSamples(1)">+</button>
+                    </div>
+                  </div>
+                </div>
+                <label>Gold Sample Weights (g)</label>
+                <div class="weights-panel" id="goldWeightsContainer" style="max-height: 100px; min-height: 80px;">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+
+              <div>
+                <div class="row" style="align-items: center; margin-bottom: 8px;">
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label style="color: #94A3B8;">Silver Samples</label>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                      <button type="button" class="btn-small" onclick="adjustSilverSamples(-1)">-</button>
+                      <input type="number" id="silverNoOfSamples" value="1" min="1" max="15" onchange="generateSilverWeightRows()" style="text-align: center; font-weight: bold; width: 50px;">
+                      <button type="button" class="btn-small" onclick="adjustSilverSamples(1)">+</button>
+                    </div>
+                  </div>
+                </div>
+                <label>Silver Sample Weights (g)</label>
+                <div class="weights-panel" id="silverWeightsContainer" style="max-height: 100px; min-height: 80px;">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4: Customer Request Declarations -->
+          <div class="card">
+            <h3>4. Customer Request</h3>
+            <div class="form-group">
+              <label for="publicDomain">Information intended to place in the public domain by testing laboratory?</label>
+              <select id="publicDomain">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="customerWitnessed">Test witness by the customer & its representative?</label>
+              <select id="customerWitnessed">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="reportCopy">Hard Copy or Soft Copy of the Test Report required?</label>
+              <select id="reportCopy">
+                <option value="Hard">Hard</option>
+                <option value="Soft">Soft</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Card 5: Remarks & Notes -->
+          <div class="card">
+            <h3>5. Remarks & Notes</h3>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="remarks">Special Remarks / Notes</label>
+              <textarea id="remarks" rows="2" placeholder="Optional comments..."></textarea>
+            </div>
+          </div>
+          
+        </div>
+        
+      </div>
+
+      <!-- Form Action Buttons -->
+      <div class="footer-actions">
+        <button type="button" class="btn-cancel" onclick="google.script.host.close()">Cancel</button>
+        <button type="submit" id="submitBtn" class="btn-submit">
+          <span id="spinner" class="spinner hidden"></span>Save Receipt & Add to Sheet
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    var customersList = [];
+
+    // Run on startup
+    window.addEventListener('DOMContentLoaded', function() {
+      loadCustomers();
+      generateWeightRows();
+    });
+
+    /**
+     * Loads customer information from Master sheet to populate dropdown.
+     */
+    function loadCustomers() {
+      google.script.run
+        .withSuccessHandler(function(list) {
+          customersList = list;
+          var select = document.getElementById('customerName');
+          select.innerHTML = '<option value="">-- Select Customer --</option>';
+          for (var i = 0; i < list.length; i++) {
+            var opt = document.createElement('option');
+            opt.value = list[i].name;
+            opt.textContent = list[i].name;
+            select.appendChild(opt);
+          }
+        })
+        .withFailureHandler(function(err) {
+          showMsg("Failed to load customer list: " + err.message, "error");
+        })
+        .getCustomerList();
+    }
+
+    /**
+     * Handles changing selected customer name, autofilling contact details.
+     */
+    function handleCustomerChange() {
+      var selectedName = document.getElementById('customerName').value;
+      var contactInput = document.getElementById('contactNo');
+      var gstInput = document.getElementById('gstNo');
+      var addressInput = document.getElementById('address');
+      var certInput = document.getElementById('certificateName');
+      
+      if (!selectedName) {
+        contactInput.value = "";
+        gstInput.value = "";
+        addressInput.value = "";
+        certInput.value = "";
+        return;
+      }
+      
+      var cust = customersList.find(function(c) {
+        return c.name === selectedName;
+      });
+      
+      if (cust) {
+        contactInput.value = cust.contact;
+        gstInput.value = cust.gst;
+        addressInput.value = cust.address;
+        certInput.value = cust.certificateName || cust.name;
+      }
+    }
+
+    /**
+     * Handles changing the material type dropdown.
+     */
+    function handleMaterialTypeChange() {
+      var matType = document.getElementById('materialType').value;
+      var singleConfig = document.getElementById('singleConfig');
+      var bothConfig = document.getElementById('bothConfig');
+      
+      if (matType === "Both") {
+        singleConfig.classList.add('hidden');
+        bothConfig.classList.remove('hidden');
+        generateGoldWeightRows();
+        generateSilverWeightRows();
+      } else {
+        singleConfig.classList.remove('hidden');
+        bothConfig.classList.add('hidden');
+        generateWeightRows();
+      }
+    }
+
+    /**
+     * Adjusts the number of samples via +/- buttons and updates weight rows.
+     */
+    function adjustSamples(delta) {
+      var input = document.getElementById('noOfSamples');
+      var val = parseInt(input.value, 10) || 1;
+      val += delta;
+      if (val < 1) val = 1;
+      if (val > 15) val = 15;
+      input.value = val;
+      generateWeightRows();
+    }
+
+    function adjustGoldSamples(delta) {
+      var input = document.getElementById('goldNoOfSamples');
+      var val = parseInt(input.value, 10) || 1;
+      val += delta;
+      if (val < 1) val = 1;
+      if (val > 15) val = 15;
+      input.value = val;
+      generateGoldWeightRows();
+    }
+
+    function adjustSilverSamples(delta) {
+      var input = document.getElementById('silverNoOfSamples');
+      var val = parseInt(input.value, 10) || 1;
+      val += delta;
+      if (val < 1) val = 1;
+      if (val > 15) val = 15;
+      input.value = val;
+      generateSilverWeightRows();
+    }
+
+    /**
+     * Appends or removes weight input fields dynamically based on the current number of samples.
+     */
+    function generateWeightRows() {
+      var noOfSamplesInput = document.getElementById('noOfSamples');
+      var count = parseInt(noOfSamplesInput.value, 10);
+      
+      if (isNaN(count) || count < 1) {
+        count = 1;
+        noOfSamplesInput.value = 1;
+      } else if (count > 15) {
+        count = 15;
+        noOfSamplesInput.value = 15;
+      }
+      
+      var container = document.getElementById('weightsContainer');
+      var currentRows = container.getElementsByClassName('weight-row');
+      var currentCount = currentRows.length;
+      
+      if (count > currentCount) {
+        for (var i = currentCount; i < count; i++) {
+          var row = document.createElement('div');
+          row.className = 'weight-row';
+          row.id = 'weight_row_' + i;
+          row.innerHTML = '<span>Sample ' + (i + 1) + ' (g):</span>' +
+                          '<input type="number" class="weight-input" step="0.001" min="0.001" required placeholder="0.000">';
+          container.appendChild(row);
+        }
+      } else if (count < currentCount) {
+        for (var i = currentCount - 1; i >= count; i--) {
+          var row = document.getElementById('weight_row_' + i);
+          if (row) {
+            container.removeChild(row);
+          }
+        }
+      }
+    }
+
+    function generateGoldWeightRows() {
+      var input = document.getElementById('goldNoOfSamples');
+      var count = parseInt(input.value, 10);
+      if (isNaN(count) || count < 1) { count = 1; input.value = 1; }
+      if (count > 15) { count = 15; input.value = 15; }
+      
+      var container = document.getElementById('goldWeightsContainer');
+      var currentRows = container.getElementsByClassName('gold-weight-row');
+      var currentCount = currentRows.length;
+      
+      if (count > currentCount) {
+        for (var i = currentCount; i < count; i++) {
+          var row = document.createElement('div');
+          row.className = 'weight-row gold-weight-row';
+          row.id = 'gold_weight_row_' + i;
+          row.innerHTML = '<span>Gold Sample ' + (i + 1) + ' (g):</span>' +
+                          '<input type="number" class="gold-weight-input" step="0.001" min="0.001" required placeholder="0.000">';
+          container.appendChild(row);
+        }
+      } else if (count < currentCount) {
+        for (var i = currentCount - 1; i >= count; i--) {
+          var row = document.getElementById('gold_weight_row_' + i);
+          if (row) container.removeChild(row);
+        }
+      }
+    }
+
+    function generateSilverWeightRows() {
+      var input = document.getElementById('silverNoOfSamples');
+      var count = parseInt(input.value, 10);
+      if (isNaN(count) || count < 1) { count = 1; input.value = 1; }
+      if (count > 15) { count = 15; input.value = 15; }
+      
+      var container = document.getElementById('silverWeightsContainer');
+      var currentRows = container.getElementsByClassName('silver-weight-row');
+      var currentCount = currentRows.length;
+      
+      if (count > currentCount) {
+        for (var i = currentCount; i < count; i++) {
+          var row = document.createElement('div');
+          row.className = 'weight-row silver-weight-row';
+          row.id = 'silver_weight_row_' + i;
+          row.innerHTML = '<span>Silver Sample ' + (i + 1) + ' (g):</span>' +
+                          '<input type="number" class="silver-weight-input" step="0.001" min="0.001" required placeholder="0.000">';
+          container.appendChild(row);
+        }
+      } else if (count < currentCount) {
+        for (var i = currentCount - 1; i >= count; i--) {
+          var row = document.getElementById('silver_weight_row_' + i);
+          if (row) container.removeChild(row);
+        }
+      }
+    }
+
+    /**
+     * Validates form entries and submits payload to the backend saveReceipt API.
+     */
+    function handleSubmit(e) {
+      e.preventDefault();
+      
+      var submitBtn = document.getElementById('submitBtn');
+      var spinner = document.getElementById('spinner');
+      var msgBox = document.getElementById('messageBox');
+      
+      msgBox.className = "message hidden";
+      
+      var customerName = document.getElementById('customerName').value;
+      if (!customerName) {
+        showMsg("Please select a customer.", "error");
+        return;
+      }
+      
+      var materialType = document.getElementById('materialType').value;
+      var noOfSamples = 0, weights = [];
+      var goldNoOfSamples = 0, goldWeights = [];
+      var silverNoOfSamples = 0, silverWeights = [];
+      
+      if (materialType === "Both") {
+        goldNoOfSamples = parseInt(document.getElementById('goldNoOfSamples').value, 10);
+        var goldInputs = document.querySelectorAll('.gold-weight-input');
+        for (var i = 0; i < goldInputs.length; i++) {
+          var w = parseFloat(goldInputs[i].value);
+          if (isNaN(w) || w <= 0) {
+            showMsg("Please enter a valid weight for Gold Sample " + (i + 1) + ".", "error");
+            return;
+          }
+          goldWeights.push(w);
+        }
+        
+        silverNoOfSamples = parseInt(document.getElementById('silverNoOfSamples').value, 10);
+        var silverInputs = document.querySelectorAll('.silver-weight-input');
+        for (var i = 0; i < silverInputs.length; i++) {
+          var w = parseFloat(silverInputs[i].value);
+          if (isNaN(w) || w <= 0) {
+            showMsg("Please enter a valid weight for Silver Sample " + (i + 1) + ".", "error");
+            return;
+          }
+          silverWeights.push(w);
+        }
+      } else {
+        noOfSamples = parseInt(document.getElementById('noOfSamples').value, 10);
+        if (isNaN(noOfSamples) || noOfSamples < 1 || noOfSamples > 15) {
+          showMsg("Number of samples must be between 1 and 15.", "error");
+          return;
+        }
+        
+        var weightInputs = document.querySelectorAll('.weight-input');
+        for (var i = 0; i < weightInputs.length; i++) {
+          var w = parseFloat(weightInputs[i].value);
+          if (isNaN(w) || w <= 0) {
+            showMsg("Please enter a valid weight for Sample " + (i + 1) + ".", "error");
+            return;
+          }
+          weights.push(w);
+        }
+      }
+      
+      var receivedBy = document.getElementById('receivedBy').value.trim();
+      if (!receivedBy) {
+        showMsg("Please enter who received the samples.", "error");
+        return;
+      }
+      
+      var rate = parseFloat(document.getElementById('rate').value);
+      if (isNaN(rate) || rate < 0) {
+        showMsg("Please enter a valid rate.", "error");
+        return;
+      }
+      
+      var certificateName = document.getElementById('certificateName').value.trim();
+      if (!certificateName) {
+        showMsg("Please enter a Certificate Name.", "error");
+        return;
+      }
+      
+      var formData = {
+        customerName: customerName,
+        contactNo: document.getElementById('contactNo').value,
+        gstNo: document.getElementById('gstNo').value,
+        address: document.getElementById('address').value,
+        certificateName: certificateName,
+        materialType: materialType,
+        noOfSamples: noOfSamples,
+        weights: weights,
+        goldNoOfSamples: goldNoOfSamples,
+        goldWeights: goldWeights,
+        silverNoOfSamples: silverNoOfSamples,
+        silverWeights: silverWeights,
+        processName: document.getElementById('processName').value,
+        rate: rate,
+        paymentStatus: document.getElementById('paymentStatus').value,
+        sampleCondition: document.getElementById('sampleCondition').value,
+        publicDomain: document.getElementById('publicDomain').value,
+        customerWitnessed: document.getElementById('customerWitnessed').value,
+        reportCopy: document.getElementById('reportCopy').value,
+        qtyOk: "Yes",
+        receivedBy: receivedBy,
+        remarks: document.getElementById('remarks').value
+      };
+      
+      submitBtn.disabled = true;
+      spinner.classList.remove('hidden');
+      
+      google.script.run
+        .withSuccessHandler(function(result) {
+          submitBtn.disabled = false;
+          spinner.classList.add('hidden');
+          
+          var successHtml = '';
+          if (result.type === "Both") {
+            successHtml = '<div><strong>Success! Receipts generated:</strong></div>' +
+                          '<div style="margin-top: 5px; font-size: 11px;">Gold: ' + result.goldReceiptNo + '</div>' +
+                          '<div style="font-size: 11px;">Silver: ' + result.silverReceiptNo + '</div>' +
+                          '<div style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px; align-items: center;">' +
+                          '  <div style="display: flex; gap: 10px;">' +
+                          '    <button type="button" class="btn-small" style="background-color: #FBBF24; color: #000; font-weight: bold; border-radius: 4px;" onclick="printReceipt(\'' + result.goldReceiptNo + '\')">Print Gold Slip</button>' +
+                          '    <button type="button" class="btn-small" style="background-color: #94A3B8; color: #000; font-weight: bold; border-radius: 4px;" onclick="printReceipt(\'' + result.silverReceiptNo + '\')">Print Silver Slip</button>' +
+                          '  </div>' +
+                          '  <button type="button" class="btn-small" style="background-color: #3b82f6; font-weight: bold; border-radius: 4px; padding: 6px 20px;" onclick="google.script.host.close()">Close Window</button>' +
+                          '</div>';
+          } else {
+            successHtml = '<div><strong>Success! Receipt ' + result.receiptNo + ' saved.</strong></div>' +
+                          '<div style="margin-top: 10px; display: flex; gap: 10px; justify-content: center;">' +
+                          '<button type="button" class="btn-small" style="background-color: #10B981; font-weight: bold; border-radius: 4px;" onclick="printReceipt(\'' + result.receiptNo + '\')">Print Receipt Slip</button>' +
+                          '<button type="button" class="btn-small" style="background-color: #3b82f6; font-weight: bold; border-radius: 4px;" onclick="google.script.host.close()">Close Window</button>' +
+                          '</div>';
+          }
+          showMsg(successHtml, "success");
+          
+          // Reset form inputs except auto-filled read-only fields
+          document.getElementById('receiptForm').reset();
+          document.getElementById('noOfSamples').value = 1;
+          document.getElementById('goldNoOfSamples').value = 1;
+          document.getElementById('silverNoOfSamples').value = 1;
+          generateWeightRows();
+          handleMaterialTypeChange();
+        })
+        .withFailureHandler(function(err) {
+          submitBtn.disabled = false;
+          spinner.classList.add('hidden');
+          showMsg("Error saving receipt: " + err.message, "error");
+        })
+        .saveCustomerReceipt(formData);
+    }
+
+    function showMsg(text, type) {
+      var msgBox = document.getElementById('messageBox');
+      msgBox.innerHTML = text;
+      msgBox.className = "message " + (type === "success" ? "success-msg" : "error-msg");
+      msgBox.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function printReceipt(receiptNo) {
+      google.script.run.printReceiptSlip(receiptNo);
+    }
+  </script>
+</body>
+</html>

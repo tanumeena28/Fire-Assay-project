@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <title>Inventory Desk</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0F172A; /* slate-900 */
+      color: #F8FAFC; /* slate-50 */
+      margin: 0;
+      padding: 16px 20px;
+      font-size: 13px;
+      box-sizing: border-box;
+    }
+
+    .container {
+      max-width: 100%;
+    }
+
+    /* Premium Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+    }
+
+    .header-title h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #F1F5F9;
+    }
+
+    .header-title p {
+      margin: 4px 0 0 0;
+      font-size: 11px;
+      color: #94A3B8;
+    }
+
+    /* Low Stock Warning Alert banner */
+    .alert-banner {
+      background-color: rgba(239, 68, 68, 0.15);
+      border: 1px solid #EF4444;
+      color: #F87171;
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin-bottom: 14px;
+      font-weight: 600;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.95; }
+      50% { opacity: 1; transform: scale(1.002); }
+      100% { opacity: 0.95; }
+    }
+
+    /* Message Alert Box */
+    .message {
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 14px;
+      font-weight: 500;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .success-msg {
+      background-color: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10B981;
+      color: #34D399;
+    }
+
+    .error-msg {
+      background-color: rgba(239, 68, 68, 0.15);
+      border: 1px solid #EF4444;
+      color: #F87171;
+    }
+
+    /* Dashboard Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stock-card {
+      background-color: #1E293B; /* slate-800 */
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px 10px;
+      text-align: center;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      position: relative;
+      transition: transform 0.2s ease;
+    }
+
+    .stock-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .stock-card.low-stock-card {
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    .item-name {
+      font-size: 10px;
+      font-weight: 600;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .item-qty {
+      font-size: 20px;
+      font-weight: 700;
+      color: #F8FAFC;
+      margin-bottom: 6px;
+    }
+
+    .item-unit {
+      font-size: 11px;
+      color: #64748B;
+      font-weight: 500;
+      margin-left: 2px;
+    }
+
+    .stock-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-ok {
+      background-color: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10B981;
+      color: #34D399;
+    }
+
+    .badge-low {
+      background-color: rgba(239, 68, 68, 0.15);
+      border: 1px solid #EF4444;
+      color: #F87171;
+    }
+
+    /* Form and Logs 2-Column Split */
+    .split-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .card {
+      background-color: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 14px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      box-sizing: border-box;
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #3B82F6;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group {
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: #CBD5E1;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    select, input[type="text"], input[type="number"], textarea {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      background-color: #0F172A;
+      color: #FFFFFF;
+      font-size: 12px;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    /* Buttons */
+    .btn-action {
+      width: 100%;
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      color: white;
+      padding: 9px 14px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .btn-action:hover {
+      background: linear-gradient(135deg, #3B82F6, #2563EB);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-action:disabled {
+      background: #475569;
+      cursor: not-allowed;
+      box-shadow: none;
+      color: #94A3B8;
+    }
+
+    .btn-small {
+      background-color: #334155;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .btn-small:hover {
+      background-color: #475569;
+    }
+
+    /* Scrollable Log History Panel */
+    .history-panel {
+      height: 310px;
+      overflow-y: auto;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      background-color: #0F172A;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #1E293B;
+      color: #94A3B8;
+      font-weight: 600;
+      padding: 8px 10px;
+      border-bottom: 1px solid #334155;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      text-transform: uppercase;
+      font-size: 9px;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #1E293B;
+      color: #CBD5E1;
+      vertical-align: middle;
+    }
+
+    tr:hover td {
+      background-color: rgba(51, 65, 85, 0.2);
+    }
+
+    .tx-type-badge {
+      display: inline-block;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 8px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .tx-in {
+      background-color: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10B981;
+      color: #34D399;
+    }
+
+    .tx-out {
+      background-color: rgba(239, 68, 68, 0.15);
+      border: 1px solid #EF4444;
+      color: #F87171;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #FFF;
+      animation: spin 1s ease-in-out infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-title">
+        <h2>Inventory Desk</h2>
+        <p>NCH Services Pvt. Ltd., Surat | Metals & Chemical Stock Control</p>
+      </div>
+      <button class="btn-small" onclick="google.script.host.close()">Close</button>
+    </div>
+
+    <!-- Live Alert Banner (Drawn on warning levels) -->
+    <div id="alertBanner" class="alert-banner hidden">
+      <span>⚠️ <strong>Low Stock Warning:</strong> Please refill <span id="alertItemsList">Gold</span> stock immediately!</span>
+    </div>
+
+    <!-- Action Confirmation Message Box -->
+    <div id="messageBox" class="message hidden"></div>
+
+    <!-- Live stock cards dashboard -->
+    <div class="dashboard-grid">
+      <!-- Gold Card -->
+      <div class="stock-card" id="card_Gold">
+        <div class="item-name">Gold</div>
+        <div class="item-qty"><span id="qty_Gold">0.00</span><span class="item-unit">g</span></div>
+        <span class="stock-badge badge-ok" id="badge_Gold">In Stock</span>
+      </div>
+      
+      <!-- Silver Card -->
+      <div class="stock-card" id="card_Silver">
+        <div class="item-name">Silver</div>
+        <div class="item-qty"><span id="qty_Silver">0.00</span><span class="item-unit">g</span></div>
+        <span class="stock-badge badge-ok" id="badge_Silver">In Stock</span>
+      </div>
+      
+      <!-- Lead Card -->
+      <div class="stock-card" id="card_Lead">
+        <div class="item-name">Lead</div>
+        <div class="item-qty"><span id="qty_Lead">0.00</span><span class="item-unit">g</span></div>
+        <span class="stock-badge badge-ok" id="badge_Lead">In Stock</span>
+      </div>
+      
+      <!-- Nickel Card -->
+      <div class="stock-card" id="card_Nickel">
+        <div class="item-name">Nickel</div>
+        <div class="item-qty"><span id="qty_Nickel">0.00</span><span class="item-unit">g</span></div>
+        <span class="stock-badge badge-ok" id="badge_Nickel">In Stock</span>
+      </div>
+    </div>
+
+    <!-- Main split UI section -->
+    <div class="split-layout">
+      
+      <!-- Left Column: Form Entry Panel -->
+      <div class="card">
+        <h3>Adjust Consumable Stock</h3>
+        <form id="adjustForm" onsubmit="handleAdjustment(event)">
+          
+          <div class="form-group">
+            <label for="selectItem">Select Material</label>
+            <select id="selectItem" required>
+              <option value="Gold">Gold</option>
+              <option value="Silver">Silver</option>
+              <option value="Lead">Lead</option>
+              <option value="Nickel">Nickel</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="selectType">Transaction Type</label>
+            <select id="selectType" required>
+              <option value="Stock In">Stock In (Purchase/Add)</option>
+              <option value="Stock Out">Stock Out (Use/Consume)</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="inputQty">Quantity (g)</label>
+            <input type="number" id="inputQty" min="0.01" step="0.01" required placeholder="0.00">
+          </div>
+          
+          <div class="form-group">
+            <label for="inputReason">Reference / Reason</label>
+            <input type="text" id="inputReason" placeholder="e.g. Purchase Invoice 0411, Fire Assay Batch..." required>
+          </div>
+          
+          <div class="form-group">
+            <label for="inputStaff">Staff Name</label>
+            <input type="text" id="inputStaff" placeholder="Assayer / Manager Name" required>
+          </div>
+          
+          <button type="submit" class="btn-action" id="btnSubmit">
+            <span id="btnSpinner" class="spinner hidden" style="margin-right: 4px;"></span>
+            Update Stock Balance
+          </button>
+        </form>
+      </div>
+
+      <!-- Right Column: History Log Panel -->
+      <div class="card">
+        <h3>Recent Transactions Log</h3>
+        <div class="history-panel">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 70px;">Date & Time</th>
+                <th style="width: 50px;">Material</th>
+                <th style="width: 70px;">Type</th>
+                <th style="width: 55px; text-align: right;">Qty (g)</th>
+                <th style="text-align: left;">Reason / Reference</th>
+                <th style="width: 65px;">Staff</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <tr>
+                <td colspan="6" style="text-align: center; color: #64748B; padding: 20px;">
+                  Loading transaction history logs...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    // Run on dialog load
+    window.addEventListener('DOMContentLoaded', function() {
+      refreshData();
+    });
+
+    /**
+     * Refreshes both the Dashboard Cards and the Transactions list.
+     */
+    function refreshData() {
+      // 1. Fetch current stock balances
+      google.script.run
+        .withSuccessHandler(function(items) {
+          var lowItems = [];
+          
+          for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var name = item.itemName;
+            
+            // Set balance text
+            var qtyEl = document.getElementById('qty_' + name);
+            if (qtyEl) {
+              qtyEl.textContent = item.currentStock.toFixed(2);
+            }
+            
+            // Set status badge and card styling
+            var badgeEl = document.getElementById('badge_' + name);
+            var cardEl = document.getElementById('card_' + name);
+            if (badgeEl && cardEl) {
+              badgeEl.className = "stock-badge";
+              cardEl.classList.remove('low-stock-card');
+              
+              if (item.isLow) {
+                badgeEl.textContent = "Low Stock";
+                badgeEl.classList.add('badge-low');
+                cardEl.classList.add('low-stock-card');
+                lowItems.push(name + ' (<' + item.minAlert + 'g)');
+              } else {
+                badgeEl.textContent = "In Stock";
+                badgeEl.classList.add('badge-ok');
+              }
+            }
+          }
+          
+          // Render low stock reminder alert banner
+          var banner = document.getElementById('alertBanner');
+          var bannerList = document.getElementById('alertItemsList');
+          if (lowItems.length > 0) {
+            bannerList.textContent = lowItems.join(', ');
+            banner.classList.remove('hidden');
+          } else {
+            banner.classList.add('hidden');
+          }
+        })
+        .withFailureHandler(function(err) {
+          showMsg("Failed to load stock data: " + err.message, "error");
+        })
+        .getInventoryData();
+
+      // 2. Fetch history logs
+      google.script.run
+        .withSuccessHandler(function(history) {
+          var tbody = document.getElementById('historyTableBody');
+          tbody.innerHTML = '';
+          
+          if (history.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748B; padding: 20px;">No transaction history found.</td></tr>';
+            return;
+          }
+          
+          for (var i = 0; i < history.length; i++) {
+            var row = history[i];
+            var tr = document.createElement('tr');
+            
+            var typeClass = (row.type === "Stock In") ? "tx-in" : "tx-out";
+            var typeLabel = (row.type === "Stock In") ? "Stock In" : "Consume";
+            
+            tr.innerHTML = 
+              '<td>' + row.date + ' ' + row.time + '</td>' +
+              '<td><strong>' + row.itemName + '</strong></td>' +
+              '<td><span class="tx-type-badge ' + typeClass + '">' + typeLabel + '</span></td>' +
+              '<td style="text-align: right; font-weight: 600;">' + row.qty.toFixed(2) + '</td>' +
+              '<td style="text-align: left; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="' + row.reason + '">' + row.reason + '</td>' +
+              '<td>' + row.staff + '</td>';
+            
+            tbody.appendChild(tr);
+          }
+        })
+        .withFailureHandler(function(err) {
+          var tbody = document.getElementById('historyTableBody');
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #EF4444; padding: 20px;">Error loading logs.</td></tr>';
+        })
+        .getTransactionHistory();
+    }
+
+    /**
+     * Submit handler for the stock adjustment form.
+     */
+    function handleAdjustment(e) {
+      e.preventDefault();
+      
+      var btn = document.getElementById('btnSubmit');
+      var spinner = document.getElementById('btnSpinner');
+      var msgBox = document.getElementById('messageBox');
+      
+      msgBox.className = "message hidden";
+      btn.disabled = true;
+      spinner.classList.remove('hidden');
+      
+      var item = document.getElementById('selectItem').value;
+      var type = document.getElementById('selectType').value;
+      var qty = parseFloat(document.getElementById('inputQty').value);
+      var reason = document.getElementById('inputReason').value.trim();
+      var staff = document.getElementById('inputStaff').value.trim();
+      
+      google.script.run
+        .withSuccessHandler(function(resMsg) {
+          btn.disabled = false;
+          spinner.classList.add('hidden');
+          showMsg(resMsg, "success");
+          
+          // Clear inputs but keep staff name for convenience
+          document.getElementById('inputQty').value = '';
+          document.getElementById('inputReason').value = '';
+          
+          // Refresh lists immediately
+          refreshData();
+        })
+        .withFailureHandler(function(err) {
+          btn.disabled = false;
+          spinner.classList.add('hidden');
+          showMsg("Transaction failed: " + err.message, "error");
+        })
+        .adjustInventory(item, type, qty, reason, staff);
+    }
+
+    function showMsg(text, type) {
+      var msgBox = document.getElementById('messageBox');
+      msgBox.innerHTML = text;
+      msgBox.className = "message " + (type === "success" ? "success-msg" : "error-msg");
+      msgBox.scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

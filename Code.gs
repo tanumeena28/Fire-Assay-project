@@ -22,6 +22,8 @@ function onOpen() {
       .addItem('📄 Generate Test Report', 'menuGenerateReport')
       .addItem('🖨️ Print Report', 'menuPrintReport')
       .addSeparator()
+      .addItem('📦 Inventory Desk', 'menuInventory')
+      .addSeparator()
       .addItem('🔄 Refresh Dashboard', 'menuRefreshDashboard')
       .addItem('⚙️ Setup All Sheets', 'setupProject')
       .addToUi();
@@ -73,7 +75,9 @@ function setupProject() {
       "Fire_Assay_Sheet",
       "Reports",
       "Dispatch",
-      "Invoice"
+      "Invoice",
+      "Inventory",
+      "Inventory_Transactions"
     ];
     
     // Ensure all target sheets exist
@@ -159,6 +163,9 @@ function setupProject() {
     } else {
       Logger.log("   - Invoice sheet exists, skipping setup.");
     }
+    
+    Logger.log("   - Setting up Inventory sheets...");
+    setupInventorySheets(ss);
     
     // Reset selection to Dashboard (Skipped to prevent layout recalculation hang)
     Logger.log("Step 4: Skipped focusing on Dashboard to prevent API hang.");

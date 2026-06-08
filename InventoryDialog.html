@@ -421,6 +421,13 @@
             </select>
           </div>
           
+          <div class="form-group hidden" id="autofetchContainer">
+            <label for="selectBatch">Autofetch from Fire Assay Batch</label>
+            <select id="selectBatch" onchange="handleBatchChange()">
+              <option value="">-- Select Batch to Autofill --</option>
+            </select>
+          </div>
+          
           <div class="form-group">
             <label for="inputQty">Quantity (g)</label>
             <input type="number" id="inputQty" min="0.01" step="0.01" required placeholder="0.00">
@@ -474,9 +481,13 @@
   </div>
 
   <script>
+    var currentBatchData = null;
+
     // Run on dialog load
     window.addEventListener('DOMContentLoaded', function() {
       refreshData();
+      loadRecentBatches();
+      setupEventListeners();
     });
 
     /**
@@ -569,6 +580,96 @@
     }
 
     /**
+     * Loads the last 10 unique batch sheet names to populate the autofetch dropdown.
+     */
+    function loadRecentBatches() {
+      google.script.run
+        .withSuccessHandler(function(batches) {
+          var select = document.getElementById('selectBatch');
+          select.innerHTML = '<option value="">-- Select Batch to Autofill --</option>';
+          for (var i = 0; i < batches.length; i++) {
+            var opt = document.createElement('option');
+            opt.value = batches[i];
+            opt.textContent = batches[i];
+            select.appendChild(opt);
+          }
+        })
+        .withFailureHandler(function(err) {
+          console.error("Failed to load recent batches: " + err.message);
+        })
+        .getRecentBatches();
+    }
+
+    /**
+     * Configures event listeners for transaction type and material selectors.
+     */
+    function setupEventListeners() {
+      document.getElementById('selectType').addEventListener('change', function() {
+        var type = this.value;
+        var autofetch = document.getElementById('autofetchContainer');
+        if (type === "Stock Out") {
+          autofetch.classList.remove('hidden');
+        } else {
+          autofetch.classList.add('hidden');
+          document.getElementById('selectBatch').value = "";
+          currentBatchData = null;
+        }
+      });
+      
+      document.getElementById('selectItem').addEventListener('change', function() {
+        updateAutofilledValues();
+      });
+    }
+
+    /**
+     * Handles selection of a batch in the autofetch dropdown.
+     */
+    function handleBatchChange() {
+      var batch = document.getElementById('selectBatch').value;
+      if (!batch) {
+        currentBatchData = null;
+        document.getElementById('inputQty').value = "";
+        document.getElementById('inputReason').value = "";
+        return;
+      }
+      
+      // Set temporary loading placeholders
+      document.getElementById('inputQty').value = "";
+      document.getElementById('inputQty').placeholder = "Loading...";
+      document.getElementById('inputReason').value = "";
+      document.getElementById('inputReason').placeholder = "Loading...";
+      
+      google.script.run
+        .withSuccessHandler(function(data) {
+          currentBatchData = data;
+          document.getElementById('inputQty').placeholder = "0.00";
+          document.getElementById('inputReason').placeholder = "e.g. Purchase Invoice...";
+          updateAutofilledValues();
+        })
+        .withFailureHandler(function(err) {
+          showMsg("Failed to fetch batch consumption: " + err.message, "error");
+          currentBatchData = null;
+          document.getElementById('inputQty').placeholder = "0.00";
+          document.getElementById('inputReason').placeholder = "e.g. Purchase Invoice...";
+        })
+        .getBatchConsumptionDetails(batch);
+    }
+
+    /**
+     * Updates the quantity and reason inputs with the autofetched values.
+     */
+    function updateAutofilledValues() {
+      if (!currentBatchData) return;
+      
+      var material = document.getElementById('selectItem').value;
+      var key = material.toLowerCase();
+      var qty = currentBatchData[key] || 0;
+      
+      document.getElementById('inputQty').value = qty.toFixed(2);
+      document.getElementById('inputReason').value = "Auto-consumed: Batch " + currentBatchData.batchName + " (" + currentBatchData.distinctSamples + " Samples)";
+    }
+
+    /**
      * Submit handler for the stock adjustment form.
      */
     function handleAdjustment(e) {
@@ -597,6 +698,13 @@
           // Clear inputs but keep staff name for convenience
           document.getElementById('inputQty').value = '';
           document.getElementById('inputReason').value = '';
+          document.getElementById('selectBatch').value = '';
+          currentBatchData = null;
+          
+          // Hide autofetch container if it was shown
+          var autofetch = document.getElementById('autofetchContainer');
+          if (autofetch) autofetch.classList.add('hidden');
+          document.getElementById('selectType').value = 'Stock In'; // reset to default In
           
           // Refresh lists immediately
           refreshData();

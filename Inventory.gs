@@ -257,3 +257,98 @@ function adjustInventory(itemName, type, qty, reason, staffName) {
     throw new Error(e.toString());
   }
 }
+
+/**
+ * Backend API: Returns the list of last 10 unique batch sheet names from Fire_Assay_Sheet.
+ * 
+ * @return {Array<string>} Unique batch sheet names.
+ */
+function getRecentBatches() {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var faSheet = ss.getSheetByName("Fire_Assay_Sheet");
+    if (!faSheet) return [];
+    
+    var data = faSheet.getDataRange().getValues();
+    var batches = [];
+    var seen = {};
+    
+    // Read from bottom to top to get the most recent batches first
+    for (var i = data.length - 1; i >= 1; i--) {
+      var batchName = data[i][0] ? data[i][0].toString().trim() : "";
+      if (batchName && !seen[batchName]) {
+        seen[batchName] = true;
+        batches.push(batchName);
+        if (batches.length >= 10) break;
+      }
+    }
+    return batches;
+  } catch (e) {
+    Logger.log("Error in getRecentBatches: " + e.toString());
+    return [];
+  }
+}
+
+/**
+ * Backend API: Fetches the number of samples in a Fire Assay batch
+ * and returns calculated consumable consumption values.
+ * 
+ * @param {string} batchName The Batch Sheet Name (e.g. "08062026").
+ * @return {Object} Calculated consumption weights for Gold, Silver, Lead, Nickel.
+ */
+function getBatchConsumptionDetails(batchName) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var faSheet = ss.getSheetByName("Fire_Assay_Sheet");
+    if (!faSheet) {
+      throw new Error("Fire_Assay_Sheet not found.");
+    }
+    
+    var data = faSheet.getDataRange().getValues();
+    var sampleCount = 0;
+    var cgCount = 0;
+    
+    for (var i = 1; i < data.length; i++) {
+      var rowBatch = data[i][0] ? data[i][0].toString().trim() : "";
+      if (rowBatch === batchName) {
+        var isCG = data[i][13] === true || data[i][13] === "true"; // CG Check Gold column N
+        if (isCG) {
+          cgCount++;
+        } else {
+          sampleCount++;
+        }
+      }
+    }
+    
+    // Each sample row represents one cupellation (2 readings per sub-job)
+    // Total cupellations in this batch = sampleCount + cgCount
+    var totalCupellations = sampleCount + cgCount;
+    var distinctSamples = sampleCount / 2; // Since there are 2 readings per sample
+    
+    // Default consumption formulas:
+    // Lead: 4 grams of lead foil per cupellation
+    var leadConsumed = totalCupellations * 4.0;
+    
+    // Silver: 0.6 grams per cupellation (inquation)
+    var silverConsumed = totalCupellations * 0.6;
+    
+    // Gold: Check Gold standard uses 250mg (0.25g) per check gold cupellation
+    var goldConsumed = cgCount * 0.25;
+    
+    // Nickel: Typically not used or a small default (e.g. 0)
+    var nickelConsumed = 0.0;
+    
+    return {
+      batchName: batchName,
+      totalCupellations: totalCupellations,
+      distinctSamples: distinctSamples,
+      cgCount: cgCount,
+      gold: goldConsumed,
+      silver: silverConsumed,
+      lead: leadConsumed,
+      nickel: nickelConsumed
+    };
+  } catch (e) {
+    throw new Error("Failed to fetch batch details: " + e.toString());
+  }
+}

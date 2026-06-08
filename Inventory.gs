@@ -296,7 +296,7 @@ function adjustInventory(itemName, type, qty, jobCardNo, reason, staffName) {
     var invSheet = ss.getSheetByName("Inventory");
     
     // Handle backwards compatibility signature variations
-    if (staffName === undefined && reason === undefined) {
+    if (staffName === undefined) {
       staffName = reason;
       reason = jobCardNo;
       jobCardNo = "N/A";

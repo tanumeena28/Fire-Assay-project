@@ -136,10 +136,18 @@ function getTransactionHistory() {
         dateStr = dateVal ? dateVal.toString() : "";
       }
       
+      var timeVal = data[i][2];
+      var timeStr = "";
+      if (timeVal instanceof Date) {
+        timeStr = Utilities.formatDate(timeVal, Session.getScriptTimeZone(), "HH:mm:ss");
+      } else {
+        timeStr = timeVal ? timeVal.toString() : "";
+      }
+      
       list.push({
         txId: data[i][0] ? data[i][0].toString() : "",
         date: dateStr,
-        time: data[i][2] ? data[i][2].toString() : "",
+        time: timeStr,
         itemName: data[i][3] ? data[i][3].toString() : "",
         type: data[i][4] ? data[i][4].toString() : "",
         qty: parseFloat(data[i][5]) || 0,

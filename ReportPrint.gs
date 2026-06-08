@@ -98,7 +98,7 @@ function printTestReport(reportNo) {
       .setFontWeight("bold").setFontSize(14).setHorizontalAlignment("center").setVerticalAlignment("middle").setFontColor(primaryColor);
     tempSheet.getRange("B3:C3").merge().setValue("( Assay Laboratory )")
       .setFontSize(10).setHorizontalAlignment("center").setVerticalAlignment("middle").setFontColor(primaryColor);
-    tempSheet.getRange("A4:D4").merge().setValue("101/201, Golden Point, Parsi Sheri, Navapura, Bhagal,Surat-395002.")
+    tempSheet.getRange("A4:D4").merge().setValue("Ichchhapore, Surat, Gujarat.")
       .setFontWeight("bold").setFontSize(9).setHorizontalAlignment("center").setVerticalAlignment("middle").setFontColor(primaryColor);
     
     // Top box borders

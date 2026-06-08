@@ -572,6 +572,51 @@
         bothConfig.classList.add('hidden');
         generateWeightRows();
       }
+      updateWeightFieldsRequirements();
+    }
+
+    /**
+     * Dynamically updates the required and disabled attributes of weight input fields
+     * based on the selected material type to prevent hidden required inputs from blocking validation.
+     */
+    function updateWeightFieldsRequirements() {
+      var matType = document.getElementById('materialType').value;
+      
+      // Update requirements for Single Config
+      var singleInputs = document.querySelectorAll('.weight-input');
+      for (var i = 0; i < singleInputs.length; i++) {
+        if (matType === "Both") {
+          singleInputs[i].removeAttribute('required');
+          singleInputs[i].disabled = true;
+        } else {
+          singleInputs[i].setAttribute('required', 'required');
+          singleInputs[i].disabled = false;
+        }
+      }
+      
+      // Update requirements for Gold Config
+      var goldInputs = document.querySelectorAll('.gold-weight-input');
+      for (var i = 0; i < goldInputs.length; i++) {
+        if (matType === "Both") {
+          goldInputs[i].setAttribute('required', 'required');
+          goldInputs[i].disabled = false;
+        } else {
+          goldInputs[i].removeAttribute('required');
+          goldInputs[i].disabled = true;
+        }
+      }
+      
+      // Update requirements for Silver Config
+      var silverInputs = document.querySelectorAll('.silver-weight-input');
+      for (var i = 0; i < silverInputs.length; i++) {
+        if (matType === "Both") {
+          silverInputs[i].setAttribute('required', 'required');
+          silverInputs[i].disabled = false;
+        } else {
+          silverInputs[i].removeAttribute('required');
+          silverInputs[i].disabled = true;
+        }
+      }
     }
 
     /**
@@ -632,7 +677,7 @@
           row.className = 'weight-row';
           row.id = 'weight_row_' + i;
           row.innerHTML = '<span>Sample ' + (i + 1) + ' (g):</span>' +
-                          '<input type="number" class="weight-input" step="0.001" min="0.001" required placeholder="0.000">';
+                          '<input type="number" class="weight-input" step="0.001" min="0.001" placeholder="0.000">';
           container.appendChild(row);
         }
       } else if (count < currentCount) {
@@ -643,6 +688,7 @@
           }
         }
       }
+      updateWeightFieldsRequirements();
     }
 
     function generateGoldWeightRows() {
@@ -661,7 +707,7 @@
           row.className = 'weight-row gold-weight-row';
           row.id = 'gold_weight_row_' + i;
           row.innerHTML = '<span>Gold Sample ' + (i + 1) + ' (g):</span>' +
-                          '<input type="number" class="gold-weight-input" step="0.001" min="0.001" required placeholder="0.000">';
+                          '<input type="number" class="gold-weight-input" step="0.001" min="0.001" placeholder="0.000">';
           container.appendChild(row);
         }
       } else if (count < currentCount) {
@@ -670,6 +716,7 @@
           if (row) container.removeChild(row);
         }
       }
+      updateWeightFieldsRequirements();
     }
 
     function generateSilverWeightRows() {
@@ -688,7 +735,7 @@
           row.className = 'weight-row silver-weight-row';
           row.id = 'silver_weight_row_' + i;
           row.innerHTML = '<span>Silver Sample ' + (i + 1) + ' (g):</span>' +
-                          '<input type="number" class="silver-weight-input" step="0.001" min="0.001" required placeholder="0.000">';
+                          '<input type="number" class="silver-weight-input" step="0.001" min="0.001" placeholder="0.000">';
           container.appendChild(row);
         }
       } else if (count < currentCount) {
@@ -697,6 +744,7 @@
           if (row) container.removeChild(row);
         }
       }
+      updateWeightFieldsRequirements();
     }
 
     /**

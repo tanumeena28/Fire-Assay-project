@@ -403,12 +403,19 @@ function getNextReceiptNumber() {
   var lastRow = sheet.getLastRow();
   if (lastRow <= 1) return defaultReceipt;
   
+  // Ensure the sheet has at least 15 columns for Column O
+  var lastCol = sheet.getLastColumn();
+  if (lastCol < 15) {
+    sheet.insertColumnsAfter(lastCol, 15 - lastCol);
+  }
+  
   // Column O (15th column) contains the Receipt No
   var values = sheet.getRange(2, 15, lastRow - 1, 1).getValues();
   var maxNum = 0;
   
   for (var i = 0; i < values.length; i++) {
-    var val = values[i][0].toString();
+    if (!values[i] || values[i][0] === null || values[i][0] === undefined) continue;
+    var val = values[i][0].toString().trim();
     if (val.indexOf("ICH-") === 0) {
       var parts = val.split('-');
       if (parts.length === 3) {
@@ -445,6 +452,12 @@ function getNextBatchNumber(materialType) {
   var lastRow = sheet.getLastRow();
   if (lastRow <= 1) return defaultBatch;
   
+  // Ensure the sheet has at least 15 columns for Column O
+  var lastCol = sheet.getLastColumn();
+  if (lastCol < 15) {
+    sheet.insertColumnsAfter(lastCol, 15 - lastCol);
+  }
+  
   // Read Column A (Sub-Job No) and Column O (Receipt No, which contains the FY)
   // Column A is index 0, Column O is index 14, so we read 15 columns
   var data = sheet.getRange(2, 1, lastRow - 1, 15).getValues();
@@ -453,8 +466,9 @@ function getNextBatchNumber(materialType) {
   var targetPrefix = (materialType === "Silver") ? "ICHNSAR" : "ICHNFAR";
   
   for (var i = 0; i < data.length; i++) {
-    var subJob = data[i][0].toString().trim();
-    var receipt = data[i][14].toString().trim(); // Column O
+    if (!data[i]) continue;
+    var subJob = data[i][0] ? data[i][0].toString().trim() : "";
+    var receipt = data[i][14] ? data[i][14].toString().trim() : ""; // Column O
     
     // Check if the receipt belongs to the current financial year (e.g., contains ICH-24/25-)
     if (receipt.indexOf("ICH-" + fyStr + "-") === 0) {

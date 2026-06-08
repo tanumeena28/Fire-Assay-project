@@ -239,7 +239,7 @@
       <div class="form-group" style="margin-bottom: 0;">
         <label for="receiptNo">Enter Receipt or Job Card Number(s)</label>
         <div style="display: flex; gap: 10px; align-items: center;">
-          <input type="text" id="receiptNo" placeholder="E.G. BH-26/27-0002, BHNFAR1-02" style="text-transform: uppercase; flex: 1;">
+          <input type="text" id="receiptNo" placeholder="E.G. ICH-26/27-0002, ICHNFAR1-02" style="text-transform: uppercase; flex: 1;">
           <button type="button" class="btn-small" onclick="fetchSamples()" id="btnFetch">Fetch Job Cards</button>
         </div>
         <div style="font-size: 9px; color: #94A3B8; margin-top: 4px;">Supports multiple entries separated by commas.</div>
@@ -368,7 +368,7 @@
           
           // Autofill XRF Sheet No from Receipt Batch (e.g. if receipt is BHNFAR12-01, try to set to 12)
           var subJobNo = samples[0].subJobNo;
-          var match = subJobNo.match(/BHN[F|S]AR(\d+)-/);
+          var match = subJobNo.match(/ICHN[F|S]AR(\d+)-/);
           if (match && match[1]) {
             document.getElementById('xrfSheetNo').value = ("0" + match[1]).slice(-2);
           }

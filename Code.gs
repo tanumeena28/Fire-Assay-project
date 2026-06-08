@@ -388,7 +388,7 @@ function getFinancialYearString(date) {
 }
 
 /**
- * Computes the next unique Receipt Number in sequence (BH-YY/YY-XXXX).
+ * Computes the next unique Receipt Number in sequence (ICH-YY/YY-XXXX).
  */
 function getNextReceiptNumber() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -396,7 +396,7 @@ function getNextReceiptNumber() {
   
   var now = new Date();
   var fyStr = getFinancialYearString(now); // e.g. "24/25"
-  var defaultReceipt = "BH-" + fyStr + "-0001";
+  var defaultReceipt = "ICH-" + fyStr + "-0001";
   
   if (!sheet) return defaultReceipt;
   
@@ -409,7 +409,7 @@ function getNextReceiptNumber() {
   
   for (var i = 0; i < values.length; i++) {
     var val = values[i][0].toString();
-    if (val.indexOf("BH-") === 0) {
+    if (val.indexOf("ICH-") === 0) {
       var parts = val.split('-');
       if (parts.length === 3) {
         var valFy = parts[1]; // "24/25"
@@ -426,11 +426,11 @@ function getNextReceiptNumber() {
   
   var nextNum = maxNum + 1;
   var paddedNum = ("0000" + nextNum).slice(-4);
-  return "BH-" + fyStr + "-" + paddedNum;
+  return "ICH-" + fyStr + "-" + paddedNum;
 }
 
 /**
- * Calculates the next sequential batch number for the sub-job code (BHNFAR7, BHNFAR8...).
+ * Calculates the next sequential batch number for the sub-job code (ICHNFAR7, ICHNFAR8...).
  */
 function getNextBatchNumber(materialType) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -450,17 +450,17 @@ function getNextBatchNumber(materialType) {
   var data = sheet.getRange(2, 1, lastRow - 1, 15).getValues();
   var maxBatch = 0;
   
-  var targetPrefix = (materialType === "Silver") ? "BHNSAR" : "BHNFAR";
+  var targetPrefix = (materialType === "Silver") ? "ICHNSAR" : "ICHNFAR";
   
   for (var i = 0; i < data.length; i++) {
     var subJob = data[i][0].toString().trim();
     var receipt = data[i][14].toString().trim(); // Column O
     
-    // Check if the receipt belongs to the current financial year (e.g., contains BH-24/25-)
-    if (receipt.indexOf("BH-" + fyStr + "-") === 0) {
+    // Check if the receipt belongs to the current financial year (e.g., contains ICH-24/25-)
+    if (receipt.indexOf("ICH-" + fyStr + "-") === 0) {
       if (subJob.indexOf(targetPrefix) === 0) {
-        var basePart = subJob.split('-')[0]; // "BHNFAR1" or "BHNSAR1"
-        var numPart = basePart.substring(6); // "1"
+        var basePart = subJob.split('-')[0]; // "ICHNFAR1" or "ICHNSAR1"
+        var numPart = basePart.substring(targetPrefix.length); // e.g. "1"
         var num = parseInt(numPart, 10);
         if (!isNaN(num) && num > maxBatch) {
           maxBatch = num;
@@ -499,10 +499,10 @@ function saveCustomerReceipt(formData) {
         wList.push(0);
       }
       
-      var prefix = (materialType === "Silver") ? "BHNSAR" : "BHNFAR";
+      var prefix = (materialType === "Silver") ? "ICHNSAR" : "ICHNFAR";
       var rowsToAppend = [];
       for (var i = 0; i < numSamples; i++) {
-        var subJobNo = prefix + batchNo + "-" + ("0" + (i + 1)).slice(-2); // BHNFAR1-01 or BHNSAR1-01
+        var subJobNo = prefix + batchNo + "-" + ("0" + (i + 1)).slice(-2); // ICHNFAR1-01 or ICHNSAR1-01
         var weight = parseFloat(wList[i]) || 0;
         
         var row = [

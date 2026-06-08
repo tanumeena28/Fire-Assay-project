@@ -485,6 +485,11 @@
           </div>
           
           <div class="form-group">
+            <label for="inputJobCard">Job Card / Receipt No</label>
+            <input type="text" id="inputJobCard" placeholder="e.g. JC-20260601, N/A">
+          </div>
+          
+          <div class="form-group">
             <label for="inputQty">Quantity (g)</label>
             <input type="number" id="inputQty" min="0.01" step="0.01" required placeholder="0.00">
           </div>
@@ -515,10 +520,11 @@
               <tr>
                 <th style="width: 70px;">Date & Time</th>
                 <th style="width: 50px;">Material</th>
-                <th style="width: 70px;">Type</th>
+                <th style="width: 60px;">Type</th>
                 <th style="width: 55px; text-align: right;">Qty (g)</th>
+                <th style="width: 90px; text-align: left;">Job Card / Receipt</th>
                 <th style="text-align: left;">Reason / Reference</th>
-                <th style="width: 65px;">Staff</th>
+                <th style="width: 60px;">Staff</th>
               </tr>
             </thead>
             <tbody id="historyTableBody">
@@ -632,6 +638,7 @@
               '<td><strong>' + row.itemName + '</strong></td>' +
               '<td><span class="tx-type-badge ' + typeClass + '">' + typeLabel + '</span></td>' +
               '<td style="text-align: right; font-weight: 600;">' + row.qty.toFixed(2) + '</td>' +
+              '<td style="text-align: left; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="' + (row.jobCardNo || "N/A") + '">' + (row.jobCardNo || "N/A") + '</td>' +
               '<td style="text-align: left; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="' + row.reason + '">' + row.reason + '</td>' +
               '<td>' + row.staff + '</td>';
             
@@ -696,6 +703,7 @@
         currentBatchData = null;
         document.getElementById('inputQty').value = "";
         document.getElementById('inputReason').value = "";
+        document.getElementById('inputJobCard').value = "";
         return;
       }
       
@@ -704,6 +712,7 @@
       document.getElementById('inputQty').placeholder = "Loading...";
       document.getElementById('inputReason').value = "";
       document.getElementById('inputReason').placeholder = "Loading...";
+      document.getElementById('inputJobCard').value = batch; // Autofill Job Card field with batch name!
       
       google.script.run
         .withSuccessHandler(function(data) {
@@ -752,6 +761,7 @@
       var item = document.getElementById('selectItem').value;
       var type = document.getElementById('selectType').value;
       var qty = parseFloat(document.getElementById('inputQty').value);
+      var jobCard = document.getElementById('inputJobCard').value.trim() || "N/A";
       var reason = document.getElementById('inputReason').value.trim();
       var staff = document.getElementById('inputStaff').value.trim();
       
@@ -763,6 +773,7 @@
           
           // Clear inputs but keep staff name for convenience
           document.getElementById('inputQty').value = '';
+          document.getElementById('inputJobCard').value = '';
           document.getElementById('inputReason').value = '';
           document.getElementById('selectBatch').value = '';
           currentBatchData = null;
@@ -780,7 +791,7 @@
           spinner.classList.add('hidden');
           showMsg("Transaction failed: " + err.message, "error");
         })
-        .adjustInventory(item, type, qty, reason, staff);
+        .adjustInventory(item, type, qty, jobCard, reason, staff);
     }
 
     function showMsg(text, type) {

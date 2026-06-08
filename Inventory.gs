@@ -12,6 +12,9 @@
  */
 function menuInventory() {
   try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    setupInventorySheets(ss);
+    
     var html = HtmlService.createHtmlOutputFromFile('InventoryDialog')
         .setWidth(900)
         .setHeight(700);
@@ -22,11 +25,6 @@ function menuInventory() {
   }
 }
 
-/**
- * Checks and creates the background inventory sheets, seeding initial rows if empty.
- * 
- * @param {SpreadsheetApp.Spreadsheet} ss The active spreadsheet.
- */
 function setupInventorySheets(ss) {
   var invSheet = ss.getSheetByName("Inventory");
   if (!invSheet) {
@@ -40,21 +38,56 @@ function setupInventorySheets(ss) {
   
   // 1. Setup Inventory Sheet Headers
   var invLastRow = invSheet.getLastRow();
-  if (invLastRow === 0) {
+  if (invLastRow <= 1) {
+    invSheet.clear();
     var headers = ["Item ID", "Item Name", "Current Stock", "Unit", "Min Alert Level", "Last Updated"];
     invSheet.getRange(1, 1, 1, headers.length).setValues([headers]);
     formatSheetCommon(invSheet, headers.length, "#8B5CF6"); // Purple tab color
     
-    // Seed initial items (Gold, Silver, Lead, Nickel)
+    // Seed initial items (Gold, Silver, Lead, Copper, Nickel) with new alert thresholds
     var seedItems = [
-      ["INV-01", "Gold", 0.0, "g", 10.0, ""],
-      ["INV-02", "Silver", 0.0, "g", 50.0, ""],
-      ["INV-03", "Lead", 0.0, "g", 1000.0, ""],
-      ["INV-04", "Nickel", 0.0, "g", 100.0, ""]
+      ["INV-01", "Gold", 0.0, "g", 5.0, ""],
+      ["INV-02", "Silver", 0.0, "g", 20.0, ""],
+      ["INV-03", "Lead", 0.0, "g", 500.0, ""],
+      ["INV-04", "Copper", 0.0, "g", 1.0, ""],
+      ["INV-05", "Nickel", 0.0, "g", 1.0, ""]
     ];
     invSheet.getRange(2, 1, seedItems.length, headers.length).setValues(seedItems);
     invSheet.getRange(2, 3, seedItems.length, 1).setNumberFormat("0.00");
     invSheet.getRange(2, 5, seedItems.length, 1).setNumberFormat("0.00");
+  } else {
+    // Check if Copper is present, append if missing
+    var data = invSheet.getDataRange().getValues();
+    var hasCopper = false;
+    for (var i = 1; i < data.length; i++) {
+      if (data[i][1] && data[i][1].toString().trim().toLowerCase() === "copper") {
+        hasCopper = true;
+        break;
+      }
+    }
+    if (!hasCopper) {
+      var nextId = "INV-0" + (data.length);
+      var copperRow = [nextId, "Copper", 0.0, "g", 1.0, ""];
+      var nextRow = invSheet.getLastRow() + 1;
+      invSheet.getRange(nextRow, 1, 1, copperRow.length).setValues([copperRow]);
+      invSheet.getRange(nextRow, 3).setNumberFormat("0.00");
+      invSheet.getRange(nextRow, 5).setNumberFormat("0.00");
+    }
+    
+    // Update alert levels dynamically for existing items
+    var updatedLimits = {
+      "gold": 5.0,
+      "silver": 20.0,
+      "lead": 500.0,
+      "nickel": 1.0,
+      "copper": 1.0
+    };
+    for (var i = 1; i < data.length; i++) {
+      var name = data[i][1] ? data[i][1].toString().trim().toLowerCase() : "";
+      if (updatedLimits[name] !== undefined) {
+        invSheet.getRange(i + 1, 5).setValue(updatedLimits[name]);
+      }
+    }
   }
   
   // 2. Setup Inventory Transactions Sheet Headers
@@ -75,11 +108,37 @@ function getInventoryData() {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName("Inventory");
+    var txSheet = ss.getSheetByName("Inventory_Transactions");
     if (!sheet) return [];
     
     var data = sheet.getDataRange().getValues();
-    var list = [];
     
+    // Fetch transaction data to compute totals
+    var txData = [];
+    if (txSheet) {
+      txData = txSheet.getDataRange().getValues();
+    }
+    
+    // Compute total purchased (Stock In) and total consumed (Stock Out) per item
+    var totals = {};
+    for (var j = 1; j < txData.length; j++) {
+      if (!txData[j]) continue;
+      var item = txData[j][3] ? txData[j][3].toString().trim() : "";
+      var type = txData[j][4] ? txData[j][4].toString().trim() : "";
+      var qty = parseFloat(txData[j][5]) || 0;
+      
+      if (!totals[item]) {
+        totals[item] = { purchased: 0, consumed: 0 };
+      }
+      
+      if (type === "Stock In") {
+        totals[item].purchased += qty;
+      } else if (type === "Stock Out") {
+        totals[item].consumed += qty;
+      }
+    }
+    
+    var list = [];
     for (var i = 1; i < data.length; i++) {
       var itemName = data[i][1] ? data[i][1].toString().trim() : "";
       if (itemName) {
@@ -88,6 +147,8 @@ function getInventoryData() {
         var unit = data[i][3] ? data[i][3].toString().trim() : "";
         var lastUpdated = data[i][5] ? data[i][5].toString() : "";
         
+        var itemTotals = totals[itemName] || { purchased: 0, consumed: 0 };
+        
         list.push({
           itemId: data[i][0] ? data[i][0].toString() : "",
           itemName: itemName,
@@ -95,7 +156,9 @@ function getInventoryData() {
           unit: unit,
           minAlert: minAlert,
           lastUpdated: lastUpdated,
-          isLow: currentStock < minAlert
+          isLow: currentStock < minAlert,
+          totalPurchased: itemTotals.purchased,
+          totalConsumed: itemTotals.consumed
         });
       }
     }
@@ -338,6 +401,9 @@ function getBatchConsumptionDetails(batchName) {
     // Nickel: Typically not used or a small default (e.g. 0)
     var nickelConsumed = 0.0;
     
+    // Copper: Typically not used or a small default (e.g. 0)
+    var copperConsumed = 0.0;
+    
     return {
       batchName: batchName,
       totalCupellations: totalCupellations,
@@ -346,7 +412,8 @@ function getBatchConsumptionDetails(batchName) {
       gold: goldConsumed,
       silver: silverConsumed,
       lead: leadConsumed,
-      nickel: nickelConsumed
+      nickel: nickelConsumed,
+      copper: copperConsumed
     };
   } catch (e) {
     throw new Error("Failed to fetch batch details: " + e.toString());

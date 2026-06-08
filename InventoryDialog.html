@@ -91,7 +91,7 @@
     /* Dashboard Grid */
     .dashboard-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 12px;
       margin-bottom: 16px;
     }
@@ -158,6 +158,31 @@
       background-color: rgba(239, 68, 68, 0.15);
       border: 1px solid #EF4444;
       color: #F87171;
+    }
+
+    /* Card Purchase vs Consume Breakdown */
+    .card-breakdown {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 9px;
+      color: #94A3B8;
+      border-top: 1px solid #334155;
+      padding-top: 6px;
+    }
+    
+    .card-breakdown div {
+      flex: 1;
+      text-align: center;
+    }
+    
+    .card-breakdown div:first-child {
+      border-right: 1px solid #334155;
+      color: #34D399; /* Green for Stock In */
+    }
+    
+    .card-breakdown div:last-child {
+      color: #F87171; /* Red for Stock Out */
     }
 
     /* Form and Logs 2-Column Split */
@@ -374,6 +399,10 @@
         <div class="item-name">Gold</div>
         <div class="item-qty"><span id="qty_Gold">0.00</span><span class="item-unit">g</span></div>
         <span class="stock-badge badge-ok" id="badge_Gold">In Stock</span>
+        <div class="card-breakdown">
+          <div>In: <span id="in_Gold">0.00</span>g</div>
+          <div>Out: <span id="out_Gold">0.00</span>g</div>
+        </div>
       </div>
       
       <!-- Silver Card -->
@@ -381,6 +410,10 @@
         <div class="item-name">Silver</div>
         <div class="item-qty"><span id="qty_Silver">0.00</span><span class="item-unit">g</span></div>
         <span class="stock-badge badge-ok" id="badge_Silver">In Stock</span>
+        <div class="card-breakdown">
+          <div>In: <span id="in_Silver">0.00</span>g</div>
+          <div>Out: <span id="out_Silver">0.00</span>g</div>
+        </div>
       </div>
       
       <!-- Lead Card -->
@@ -388,6 +421,21 @@
         <div class="item-name">Lead</div>
         <div class="item-qty"><span id="qty_Lead">0.00</span><span class="item-unit">g</span></div>
         <span class="stock-badge badge-ok" id="badge_Lead">In Stock</span>
+        <div class="card-breakdown">
+          <div>In: <span id="in_Lead">0.00</span>g</div>
+          <div>Out: <span id="out_Lead">0.00</span>g</div>
+        </div>
+      </div>
+
+      <!-- Copper Card -->
+      <div class="stock-card" id="card_Copper">
+        <div class="item-name">Copper</div>
+        <div class="item-qty"><span id="qty_Copper">0.00</span><span class="item-unit">g</span></div>
+        <span class="stock-badge badge-ok" id="badge_Copper">In Stock</span>
+        <div class="card-breakdown">
+          <div>In: <span id="in_Copper">0.00</span>g</div>
+          <div>Out: <span id="out_Copper">0.00</span>g</div>
+        </div>
       </div>
       
       <!-- Nickel Card -->
@@ -395,6 +443,10 @@
         <div class="item-name">Nickel</div>
         <div class="item-qty"><span id="qty_Nickel">0.00</span><span class="item-unit">g</span></div>
         <span class="stock-badge badge-ok" id="badge_Nickel">In Stock</span>
+        <div class="card-breakdown">
+          <div>In: <span id="in_Nickel">0.00</span>g</div>
+          <div>Out: <span id="out_Nickel">0.00</span>g</div>
+        </div>
       </div>
     </div>
 
@@ -412,6 +464,7 @@
               <option value="Gold">Gold</option>
               <option value="Silver">Silver</option>
               <option value="Lead">Lead</option>
+              <option value="Copper">Copper</option>
               <option value="Nickel">Nickel</option>
             </select>
           </div>
@@ -510,6 +563,16 @@
             var qtyEl = document.getElementById('qty_' + name);
             if (qtyEl) {
               qtyEl.textContent = item.currentStock.toFixed(2);
+            }
+            
+            // Set In and Out breakdown text
+            var inEl = document.getElementById('in_' + name);
+            var outEl = document.getElementById('out_' + name);
+            if (inEl) {
+              inEl.textContent = item.totalPurchased.toFixed(2);
+            }
+            if (outEl) {
+              outEl.textContent = item.totalConsumed.toFixed(2);
             }
             
             // Set status badge and card styling

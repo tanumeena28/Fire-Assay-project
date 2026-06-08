@@ -13,8 +13,8 @@
 function menuInventory() {
   try {
     var html = HtmlService.createHtmlOutputFromFile('InventoryDialog')
-        .setWidth(680)
-        .setHeight(650);
+        .setWidth(900)
+        .setHeight(700);
     SpreadsheetApp.getUi().showModelessDialog(html, 'Inventory Desk');
   } catch (e) {
     var ui = SpreadsheetApp.getUi();

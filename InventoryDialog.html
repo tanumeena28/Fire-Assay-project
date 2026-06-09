@@ -712,13 +712,15 @@
       document.getElementById('inputQty').placeholder = "Loading...";
       document.getElementById('inputReason').value = "";
       document.getElementById('inputReason').placeholder = "Loading...";
-      document.getElementById('inputJobCard').value = batch; // Autofill Job Card field with batch name!
+      document.getElementById('inputJobCard').value = "";
+      document.getElementById('inputJobCard').placeholder = "Loading Job Cards...";
       
       google.script.run
         .withSuccessHandler(function(data) {
           currentBatchData = data;
           document.getElementById('inputQty').placeholder = "0.00";
           document.getElementById('inputReason').placeholder = "e.g. Purchase Invoice...";
+          document.getElementById('inputJobCard').placeholder = "e.g. JC-20260601, N/A";
           updateAutofilledValues();
         })
         .withFailureHandler(function(err) {
@@ -726,6 +728,7 @@
           currentBatchData = null;
           document.getElementById('inputQty').placeholder = "0.00";
           document.getElementById('inputReason').placeholder = "e.g. Purchase Invoice...";
+          document.getElementById('inputJobCard').placeholder = "e.g. JC-20260601, N/A";
         })
         .getBatchConsumptionDetails(batch);
     }
@@ -742,6 +745,7 @@
       
       document.getElementById('inputQty').value = qty.toFixed(2);
       document.getElementById('inputReason').value = "Auto-consumed: Batch " + currentBatchData.batchName + " (" + currentBatchData.distinctSamples + " Samples)";
+      document.getElementById('inputJobCard').value = currentBatchData.jobCards || "";
     }
 
     /**

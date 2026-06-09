@@ -34,7 +34,7 @@ function setupInventorySheets(ss) {
   var metals = ["Gold", "Silver", "Lead", "Copper", "Nickel"];
   var reportHeaders = ["Date", "Time", "Type", "Quantity", "Job Card / Receipt No", "Reference / Reason", "Staff Name"];
   
-  // 1. Setup individual report sheets for each metal
+  // 1. Setup individual report sheets for each metal & configure formatting
   for (var i = 0; i < metals.length; i++) {
     var sheetName = metals[i] + "_Report";
     var sh = ss.getSheetByName(sheetName);
@@ -43,6 +43,10 @@ function setupInventorySheets(ss) {
       sh.getRange(1, 1, 1, reportHeaders.length).setValues([reportHeaders]);
       formatSheetCommon(sh, reportHeaders.length, "#10B981"); // Green tab color
     }
+    // Set column format to plain text to prevent leading zero truncation in Job Card/Receipt No
+    sh.getRange("A:C").setNumberFormat("@");
+    sh.getRange("D:D").setNumberFormat("0.00");
+    sh.getRange("E:G").setNumberFormat("@");
   }
   
   // 2. Migrate transactions from old combined transaction sheet if it exists
@@ -422,15 +426,22 @@ function getBatchConsumptionDetails(batchName) {
     var data = faSheet.getDataRange().getValues();
     var sampleCount = 0;
     var cgCount = 0;
+    var jobCards = [];
+    var seenJCs = {};
     
     for (var i = 1; i < data.length; i++) {
       var rowBatch = data[i][0] ? data[i][0].toString().trim() : "";
       if (rowBatch === batchName) {
-        var isCG = data[i][13] === true || data[i][13] === "true"; // CG Check Gold column N
+        var subJob = data[i][1] ? data[i][1].toString().trim() : "";
+        var isCG = data[i][13] === true || data[i][13] === "true" || subJob === "Check Gold" || subJob === "CG_CALIBRATION";
         if (isCG) {
           cgCount++;
         } else {
           sampleCount++;
+          if (subJob && !seenJCs[subJob]) {
+            seenJCs[subJob] = true;
+            jobCards.push(subJob);
+          }
         }
       }
     }
@@ -456,6 +467,8 @@ function getBatchConsumptionDetails(batchName) {
     // Copper: Typically not used or a small default (e.g. 0)
     var copperConsumed = 0.0;
     
+    var jobCardListStr = jobCards.join(", ");
+    
     return {
       batchName: batchName,
       totalCupellations: totalCupellations,
@@ -465,7 +478,8 @@ function getBatchConsumptionDetails(batchName) {
       silver: silverConsumed,
       lead: leadConsumed,
       nickel: nickelConsumed,
-      copper: copperConsumed
+      copper: copperConsumed,
+      jobCards: jobCardListStr
     };
   } catch (e) {
     throw new Error("Failed to fetch batch details: " + e.toString());
